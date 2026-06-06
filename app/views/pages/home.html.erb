@@ -63,7 +63,8 @@
             <span class="ql-coupon__no">Nº 0006</span>
           </div>
           <p class="ql-claimed__hi">Stamped for <em><%= current_user.name %></em>.</p>
-          <p class="ql-claimed__sub">You're in the pool. Picks open as the fixtures land.</p>
+          <p class="ql-claimed__sub">You're in the pool. Time to call some matches.</p>
+          <%= link_to "Make your picks →", picks_path, class: "ql-btn ql-claimed__cta" %>
           <div class="ql-claimed__row">
             <span class="ql-claimed__badge">✓ Claimed</span>
             <%= button_to "Not you?", leave_path, method: :delete, class: "ql-claimed__leave" %>

@@ -18,4 +18,11 @@ class ApplicationController < ActionController::Base
   def signed_in?
     current_user.present?
   end
+
+  # Gate actions that need a player; bounce to the join coupon otherwise.
+  def require_player
+    return if signed_in?
+
+    redirect_to root_path, alert: "Stake your name to start picking."
+  end
 end

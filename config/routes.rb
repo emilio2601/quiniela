@@ -13,6 +13,9 @@ Rails.application.routes.draw do
   post "join" => "sessions#create", as: :join
   delete "leave" => "sessions#destroy", as: :leave
 
+  # The picks board: list pickable matches and upsert a prediction per match.
+  resources :picks, only: [ :index, :create ]
+
   # Defines the root path route ("/")
   root "pages#home"
 end

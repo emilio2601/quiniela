@@ -1,0 +1,77 @@
+<% content_for :title, "Your Picks — La Quiniela" %>
+
+<div class="ql ql-page">
+  <header class="ql-top">
+    <div class="ql-wrap ql-top__row">
+      <%= link_to root_path, class: "ql-top__mark" do %><span class="ql-top__dot"></span> La Quiniela<% end %>
+      <div class="ql-top__meta ql-top__meta--player">
+        <span>Playing as <b><%= current_user.name %></b></span>
+        <%= button_to "Leave", leave_path, method: :delete, class: "ql-top__leave" %>
+      </div>
+    </div>
+  </header>
+
+  <% if notice || alert %>
+    <div class="ql-flash <%= "is-alert" if alert %>" role="status">
+      <div class="ql-wrap"><%= notice || alert %></div>
+    </div>
+  <% end %>
+
+  <main class="ql-wrap ql-picks">
+    <header class="ql-picks__head">
+      <span class="ql-kicker">FIFA World Cup 2026 · Your Coupon</span>
+      <h1 class="ql-picks__title">Make your <span class="em">picks</span>.</h1>
+      <p class="ql-picks__lede">Call every match home, draw or away — change your mind as often as you like, right up until each kickoff, when it locks for good.</p>
+    </header>
+
+    <section class="ql-picks__sec">
+      <div class="ql-sec__head">
+        <span class="ql-sec__no">Open</span>
+        <h2 class="ql-sec__title">To call</h2>
+        <span class="ql-picks__count"><%= @open_matches.size %></span>
+      </div>
+
+      <% if @open_matches.any? %>
+        <div class="ql-fixtures">
+          <% @open_matches.each do |match| %>
+            <%= render "match", match: match, pick: @picks_by_match[match.id] %>
+          <% end %>
+        </div>
+      <% else %>
+        <p class="ql-empty">Nothing open right now — check back when the next round's teams are set.</p>
+      <% end %>
+    </section>
+
+    <% if @settled_matches.any? %>
+      <section class="ql-picks__sec">
+        <div class="ql-sec__head">
+          <span class="ql-sec__no">Locked</span>
+          <h2 class="ql-sec__title">Sealed &amp; settled</h2>
+        </div>
+        <div class="ql-fixtures">
+          <% @settled_matches.each do |match| %>
+            <%= render "settled", match: match, pick: @picks_by_match[match.id] %>
+          <% end %>
+        </div>
+      </section>
+    <% end %>
+  </main>
+</div>
+
+<script>
+  (function () {
+    function localizeTimes() {
+      document.querySelectorAll(".ql-localtime").forEach(function (el) {
+        var d = new Date(el.getAttribute("datetime"));
+        if (isNaN(d)) return;
+        el.textContent = d.toLocaleString([], {
+          weekday: "short", month: "short", day: "numeric", hour: "numeric", minute: "2-digit"
+        });
+      });
+    }
+    document.addEventListener("DOMContentLoaded", localizeTimes);
+    document.addEventListener("turbo:load", localizeTimes);
+    document.addEventListener("turbo:frame-render", localizeTimes);
+    if (document.readyState !== "loading") localizeTimes();
+  })();
+</script>

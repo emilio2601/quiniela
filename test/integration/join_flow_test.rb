@@ -5,11 +5,11 @@ class JoinFlowTest < ActionDispatch::IntegrationTest
     assert_difference "User.count", 1 do
       post join_path, params: { name: "Nadia" }
     end
-    assert_redirected_to root_path
+    assert_redirected_to picks_path
     assert_equal User.find_by(name: "Nadia").id, session[:user_id]
 
     follow_redirect!
-    assert_select ".ql-claimed__hi", /Nadia/
+    assert_select ".ql-top__meta--player", /Nadia/
   end
 
   test "joining with an existing name (any case) reuses the player" do

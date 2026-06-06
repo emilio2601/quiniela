@@ -14,9 +14,19 @@ class Match < ApplicationRecord
 
   scope :locked, -> { where(kickoff_at: ..Time.current) }
   scope :open_for_picks, -> { where(kickoff_at: Time.current..) }
+  # Real nations have no digit in their name; every openfootball knockout
+  # placeholder (W97, 3CDFG, 1A) does — so this finds matches whose teams are
+  # resolved. See #teams_known?.
+  scope :with_known_teams, -> { where("home_team !~ '[0-9]' AND away_team !~ '[0-9]'") }
+  # Pickable = teams resolved and not yet kicked off.
+  scope :pickable, -> { open_for_picks.with_known_teams }
 
   def knockout?
     number.to_i > GROUP_STAGE_MATCHES
+  end
+
+  def teams_known?
+    [ home_team, away_team ].none? { |team| team.to_s.match?(/\d/) }
   end
 
   # Derived W/D/L from the scores. Returns :home, :draw, or :away once both

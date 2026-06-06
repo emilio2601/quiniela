@@ -1,0 +1,12 @@
+<article class="ql-match">
+  <div class="ql-match__meta">
+    <span class="ql-match__num">Match <%= match.number %></span>
+    <time class="ql-localtime" datetime="<%= match.kickoff_at.utc.iso8601 %>"><%= match.kickoff_at.utc.strftime("%a %-d %b · %H:%M UTC") %></time>
+  </div>
+  <div class="ql-match__teams">
+    <span class="ql-match__team"><%= match.home_team %></span>
+    <span class="ql-match__v">v</span>
+    <span class="ql-match__team ql-match__team--away"><%= match.away_team %></span>
+  </div>
+  <%= render "controls", match: match, pick: pick %>
+</article>

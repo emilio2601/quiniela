@@ -20,4 +20,14 @@ module MatchesHelper
   def team_code(name)
     TEAM_CODES[name] || name.to_s.upcase[0, 4]
   end
+
+  # Human label for a prediction in the context of a match: the two teams play
+  # the part of "home"/"away", with "Draw" in the middle.
+  def prediction_label(prediction, match)
+    case prediction.to_s
+    when "home" then match.home_team
+    when "away" then match.away_team
+    else "Draw"
+    end
+  end
 end
