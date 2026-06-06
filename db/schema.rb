@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_06_06_220628) do
+ActiveRecord::Schema[8.1].define(version: 2026_06_06_231209) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -21,9 +21,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_06_220628) do
     t.integer "home_score"
     t.string "home_team", null: false
     t.datetime "kickoff_at", null: false
+    t.integer "number", null: false
     t.string "status", default: "scheduled", null: false
     t.datetime "updated_at", null: false
     t.index ["kickoff_at"], name: "index_matches_on_kickoff_at"
+    t.index ["number"], name: "index_matches_on_number", unique: true
     t.index ["status"], name: "index_matches_on_status"
   end
 

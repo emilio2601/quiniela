@@ -28,4 +28,9 @@ class MatchTest < ActiveSupport::TestCase
     assert matches(:finished).locked?
     assert_not matches(:upcoming).locked?
   end
+
+  test "knockout? is true only beyond the 72-match group stage" do
+    assert_not Match.new(number: 72).knockout?
+    assert Match.new(number: 73).knockout?
+  end
 end

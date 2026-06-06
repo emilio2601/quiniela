@@ -2,6 +2,7 @@
 
 # Finished: Brazil 0 - 1 Mexico (away upset)
 finished:
+  number: 1
   home_team: Brazil
   away_team: Mexico
   kickoff_at: <%= 2.hours.ago.to_fs(:db) %>
@@ -11,6 +12,7 @@ finished:
 
 # Open for picks: kicks off in the future, no scores yet
 upcoming:
+  number: 2
   home_team: Argentina
   away_team: Croatia
   kickoff_at: <%= 2.days.from_now.to_fs(:db) %>
