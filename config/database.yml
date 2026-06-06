@@ -5,6 +5,14 @@
 # On macOS with Postgres.app:
 #   gem install pg -- --with-pg-config=/Applications/Postgres.app/Contents/Versions/latest/bin/pg_config
 #
+<%
+  # In production we run on a single PostgreSQL server (one Dokku Postgres
+  # service) that hosts four databases. Parse the linked DATABASE_URL once and
+  # derive the per-role database names from the primary's name.
+  require "uri"
+  prod = ENV["DATABASE_URL"] ? URI.parse(ENV["DATABASE_URL"]) : nil
+  prod_db = prod && !prod.path.to_s.empty? ? prod.path.delete_prefix("/") : "quiniela_production"
+%>
 default: &default
   adapter: postgresql
   encoding: unicode
@@ -26,24 +34,28 @@ test:
   <<: *default
   database: quiniela_test
 
-# Store production data in a set of PostgreSQL databases: one primary for
-# application data plus dedicated databases for Solid Cache, Solid Queue, and
-# Solid Cable so each can be scaled and migrated independently.
+# Production runs on one PostgreSQL server (the linked Dokku Postgres service,
+# exposed as DATABASE_URL) hosting four databases: the primary for application
+# data plus dedicated databases for Solid Cache, Solid Queue, and Solid Cable
+# so each can be migrated independently. Connection details all come from
+# DATABASE_URL; only the database name differs per role.
 production:
   primary: &primary_production
     <<: *default
-    database: quiniela_production
-    username: quiniela
-    password: <%= ENV["QUINIELA_DATABASE_PASSWORD"] %>
+    host: <%= prod&.host || "localhost" %>
+    port: <%= prod&.port || 5432 %>
+    username: <%= prod&.user || "quiniela" %>
+    password: <%= prod&.password %>
+    database: <%= prod_db %>
   cache:
     <<: *primary_production
-    database: quiniela_production_cache
+    database: <%= prod_db %>_cache
     migrations_paths: db/cache_migrate
   queue:
     <<: *primary_production
-    database: quiniela_production_queue
+    database: <%= prod_db %>_queue
     migrations_paths: db/queue_migrate
   cable:
     <<: *primary_production
-    database: quiniela_production_cable
+    database: <%= prod_db %>_cable
     migrations_paths: db/cable_migrate
