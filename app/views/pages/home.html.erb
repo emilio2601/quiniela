@@ -20,6 +20,13 @@
     </div>
   </div>
 
+  <!-- flash -->
+  <% if notice || alert %>
+    <div class="ql-flash <%= "is-alert" if alert %>" role="status">
+      <div class="ql-wrap"><%= notice || alert %></div>
+    </div>
+  <% end %>
+
   <!-- hero -->
   <section class="ql-hero">
     <div class="ql-stamp">
@@ -49,18 +56,33 @@
       </div>
 
       <!-- coupon CTA -->
-      <form class="ql-coupon" data-join>
-        <div class="ql-coupon__head">
-          <span>Shared Coupon</span>
-          <span class="ql-coupon__no">Nº 0006</span>
+      <% if signed_in? %>
+        <div class="ql-coupon ql-coupon--claimed">
+          <div class="ql-coupon__head">
+            <span>Shared Coupon</span>
+            <span class="ql-coupon__no">Nº 0006</span>
+          </div>
+          <p class="ql-claimed__hi">Stamped for <em><%= current_user.name %></em>.</p>
+          <p class="ql-claimed__sub">You're in the pool. Picks open as the fixtures land.</p>
+          <div class="ql-claimed__row">
+            <span class="ql-claimed__badge">✓ Claimed</span>
+            <%= button_to "Not you?", leave_path, method: :delete, class: "ql-claimed__leave" %>
+          </div>
         </div>
-        <label class="ql-coupon__label" for="ql-name">Stake your name</label>
-        <div class="ql-field">
-          <input class="ql-input" id="ql-name" name="name" type="text" placeholder="e.g. ANA" autocomplete="off" aria-label="Your name">
-          <button class="ql-btn" type="submit" data-join-btn>Claim ticket</button>
-        </div>
-        <p class="ql-coupon__fine">No password · No money · Honour system</p>
-      </form>
+      <% else %>
+        <%= form_with url: join_path, method: :post, class: "ql-coupon" do |f| %>
+          <div class="ql-coupon__head">
+            <span>Shared Coupon</span>
+            <span class="ql-coupon__no">Nº 0006</span>
+          </div>
+          <%= f.label :name, "Stake your name", class: "ql-coupon__label" %>
+          <div class="ql-field">
+            <%= f.text_field :name, placeholder: "e.g. ANA", autocomplete: "off", autofocus: false, class: "ql-input", aria: { label: "Your name" } %>
+            <%= f.button "Claim ticket", class: "ql-btn" %>
+          </div>
+          <p class="ql-coupon__fine">No password · No money · Honour system</p>
+        <% end %>
+      <% end %>
     </div>
   </section>
 
@@ -222,21 +244,6 @@
         });
       }, { threshold: 0.18 });
       document.querySelectorAll(".ql-reveal").forEach(function (el) { io.observe(el); });
-
-      // Coupon "claim" flourish (front-end only for now)
-      var form = document.querySelector("[data-join]");
-      if (form && !form.dataset.bound) {
-        form.dataset.bound = "1";
-        form.addEventListener("submit", function (ev) {
-          ev.preventDefault();
-          var btn = form.querySelector("[data-join-btn]");
-          var name = (form.querySelector("#ql-name").value || "").trim();
-          if (!name) { form.querySelector("#ql-name").focus(); return; }
-          btn.textContent = "✓ Claimed";
-          btn.classList.add("is-stamped");
-          form.querySelector(".ql-coupon__fine").textContent = "Welcome, " + name.toUpperCase() + " — coupon Nº 0006 is yours.";
-        });
-      }
     }
     document.addEventListener("DOMContentLoaded", init);
     document.addEventListener("turbo:load", init);
