@@ -148,9 +148,9 @@ body { background-color: #ece3cd; }
   line-height: 0.82;
   letter-spacing: -0.012em;
 }
-.ql-title .em { color: var(--vermilion); -webkit-text-stroke: 0; position: relative; }
+.ql-title .em { color: var(--vermilion); position: relative; display: inline-block; }
 .ql-title .em::after {
-  content: ""; position: absolute; left: 0; right: -4px; bottom: 0.1em; height: 0.09em;
+  content: ""; position: absolute; left: 0; right: 0; bottom: 0.08em; height: 0.08em;
   background: var(--vermilion); transform: scaleX(0); transform-origin: left;
   animation: ql-underline 0.7s cubic-bezier(.2,.7,.2,1) 1.35s forwards;
 }
@@ -179,13 +179,12 @@ body { background-color: #ece3cd; }
   padding: 22px 22px 20px;
   opacity: 0; animation: ql-fade 0.8s ease 0.9s forwards;
 }
-.ql-coupon::before, .ql-coupon::after {
-  content: ""; position: absolute; left: -2px; right: -2px; height: 9px;
-  background-image: radial-gradient(circle at 6px 50%, transparent 0 4px, var(--ink) 4px 5px, transparent 5px);
-  background-size: 16px 9px; opacity: 0.55;
+/* punch-holes along the top edge only, like a torn-off pad/stub */
+.ql-coupon::before {
+  content: ""; position: absolute; left: 14px; right: 14px; top: -7px; height: 14px;
+  background-image: radial-gradient(circle at 8px 50%, var(--paper) 0 5px, var(--ink) 5px 6px, transparent 6px);
+  background-size: 22px 14px; background-repeat: repeat-x;
 }
-.ql-coupon::before { top: -9px; }
-.ql-coupon::after { bottom: -9px; transform: scaleY(-1); }
 .ql-coupon__head {
   display: flex; justify-content: space-between; align-items: baseline;
   font-family: var(--mono); font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.18em;
@@ -239,6 +238,16 @@ body { background-color: #ece3cd; }
   border: 1.5px solid var(--ink-faint); padding: 5px 10px; color: var(--ink-soft);
 }
 .ql-chip b { color: var(--ink); }
+.ql-chip--live { display: inline-flex; align-items: center; gap: 8px; color: var(--ink); }
+.ql-pulse {
+  width: 7px; height: 7px; border-radius: 50%; background: var(--vermilion); flex: none;
+  animation: ql-pulse 1.5s ease-out infinite;
+}
+@keyframes ql-pulse {
+  0%   { box-shadow: 0 0 0 0 rgba(211, 64, 42, 0.55); opacity: 1; }
+  70%  { box-shadow: 0 0 0 7px rgba(211, 64, 42, 0); opacity: 0.7; }
+  100% { box-shadow: 0 0 0 0 rgba(211, 64, 42, 0); opacity: 1; }
+}
 
 /* ---------- section scaffolding ---------- */
 .ql-sec { border-top: 2px solid var(--ink); padding: clamp(48px, 7vw, 96px) 0; }

@@ -40,7 +40,7 @@
         <h1 class="ql-title">
           <span class="ql-line"><span>Call</span></span>
           <span class="ql-line"><span>the</span></span>
-          <span class="ql-line"><span class="em">Upset.</span></span>
+          <span class="ql-line"><span><span class="em">Upset.</span></span></span>
         </h1>
         <p class="ql-lede">
           One pool, six friends, every match called <b>home, draw or away</b>. Your
@@ -48,10 +48,10 @@
           dared is the one that pays out biggest.
         </p>
         <div class="ql-scorelines">
-          <span class="ql-chip"><b>MEX</b> v POL</span>
-          <span class="ql-chip"><b>BRA</b> v SRB</span>
-          <span class="ql-chip"><b>FRA</b> v AUS</span>
-          <span class="ql-chip">★ Upset watch</span>
+          <% @upcoming_matches.each do |match| %>
+            <span class="ql-chip"><b><%= team_code(match.home_team) %></b> v <%= team_code(match.away_team) %></span>
+          <% end %>
+          <span class="ql-chip ql-chip--live"><span class="ql-pulse" aria-hidden="true"></span> Upset watch</span>
         </div>
       </div>
 
