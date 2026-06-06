@@ -1,0 +1,17 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+# Finished: Brazil 0 - 1 Mexico (away upset)
+finished:
+  home_team: Brazil
+  away_team: Mexico
+  kickoff_at: <%= 2.hours.ago.to_fs(:db) %>
+  home_score: 0
+  away_score: 1
+  status: finished
+
+# Open for picks: kicks off in the future, no scores yet
+upcoming:
+  home_team: Argentina
+  away_team: Croatia
+  kickoff_at: <%= 2.days.from_now.to_fs(:db) %>
+  status: scheduled

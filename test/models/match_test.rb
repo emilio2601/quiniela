@@ -1,0 +1,31 @@
+require "test_helper"
+
+class MatchTest < ActiveSupport::TestCase
+  test "requires teams and kickoff" do
+    assert_not Match.new.valid?
+  end
+
+  test "result is nil until both scores are present" do
+    match = Match.new(home_team: "A", away_team: "B", kickoff_at: 1.day.from_now)
+    assert_nil match.result
+
+    match.home_score = 1
+    assert_nil match.result
+  end
+
+  test "result is derived from the scores" do
+    match = matches(:finished)
+    assert_equal :away, match.result
+
+    match.update_columns(home_score: 2, away_score: 1)
+    assert_equal :home, match.result
+
+    match.update_columns(home_score: 1, away_score: 1)
+    assert_equal :draw, match.result
+  end
+
+  test "locked? flips at kickoff" do
+    assert matches(:finished).locked?
+    assert_not matches(:upcoming).locked?
+  end
+end

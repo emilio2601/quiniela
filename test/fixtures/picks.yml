@@ -1,0 +1,19 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+# prediction enum: home=0, draw=1, away=2
+
+# On the finished match (Brazil 0-1 Mexico, away win): Ana & Ben took the
+# favourite (wrong), Cara called the upset (correct → beat 2 → 2 points).
+ana_finished:
+  user: ana
+  match: finished
+  prediction: 0
+
+ben_finished:
+  user: ben
+  match: finished
+  prediction: 0
+
+cara_finished:
+  user: cara
+  match: finished
+  prediction: 2
