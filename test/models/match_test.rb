@@ -42,4 +42,11 @@ class MatchTest < ActiveSupport::TestCase
   test "points_breakdown is nil until the match is settled" do
     assert_nil matches(:upcoming).points_breakdown
   end
+
+  test "result prefers the recorded outcome over a level score" do
+    match = matches(:knockout)
+    match.update!(status: "finished", home_score: 1, away_score: 1, outcome: "home")
+    assert_equal :home, match.result # not a draw
+    assert match.decided_on_penalties?
+  end
 end

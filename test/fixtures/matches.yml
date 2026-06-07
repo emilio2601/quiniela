@@ -17,3 +17,11 @@ upcoming:
   away_team: Croatia
   kickoff_at: <%= 2.days.from_now.to_fs(:db) %>
   status: scheduled
+
+# A knockout fixture (number > 72), pickable: two-way, no draw
+knockout:
+  number: 73
+  home_team: Spain
+  away_team: France
+  kickoff_at: <%= 5.days.from_now.to_fs(:db) %>
+  status: scheduled

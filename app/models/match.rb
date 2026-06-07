@@ -7,6 +7,7 @@ class Match < ApplicationRecord
   validates :home_team, :away_team, :kickoff_at, presence: true
   validates :number, presence: true, uniqueness: true
   validates :external_id, uniqueness: true, allow_nil: true
+  validates :outcome, inclusion: { in: %w[home draw away] }, allow_nil: true
 
   # Matches 1..72 are the group stage; 73..104 are the knockout bracket, whose
   # teams stay as openfootball placeholders (W97, 3CDFG, …) until the results
@@ -30,9 +31,12 @@ class Match < ApplicationRecord
     [ home_team, away_team ].none? { |team| team.to_s.match?(/\d/) }
   end
 
-  # Derived W/D/L from the scores. Returns :home, :draw, or :away once both
-  # scores are present, otherwise nil.
+  # The match result as :home, :draw, or :away. Prefers the authoritative
+  # outcome from the results feed (which knows a penalty-shootout winner even
+  # when the score is level); falls back to deriving it from the scores for
+  # data that has scores but no recorded outcome (e.g. dev seeds).
   def result
+    return outcome.to_sym if outcome.present?
     return nil unless home_score && away_score
 
     if home_score > away_score
@@ -42,6 +46,12 @@ class Match < ApplicationRecord
     else
       :draw
     end
+  end
+
+  # A knockout that finished level on the pitch but has a decisive result was
+  # settled by a shootout (extra time that stays level then penalties).
+  def decided_on_penalties?
+    knockout? && finished? && home_score.present? && home_score == away_score && result && result != :draw
   end
 
   # Picks lock at kickoff — see Pick#kickoff_not_passed.

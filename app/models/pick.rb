@@ -7,6 +7,7 @@ class Pick < ApplicationRecord
   validates :prediction, presence: true
   validates :user_id, uniqueness: { scope: :match_id }
   validate :kickoff_not_passed
+  validate :no_draw_in_knockout
 
   # True once the match has finished and our prediction matches the result.
   def correct?
@@ -23,5 +24,11 @@ class Pick < ApplicationRecord
     if match.locked?
       errors.add(:base, "Picks lock at kickoff and can no longer be changed")
     end
+  end
+
+  # A knockout always produces a winner (extra time, then penalties), so "draw"
+  # isn't a valid call there — you pick which team goes through.
+  def no_draw_in_knockout
+    errors.add(:prediction, "isn't an option for a knockout") if draw? && match&.knockout?
   end
 end

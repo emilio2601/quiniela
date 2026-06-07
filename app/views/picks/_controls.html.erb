@@ -4,13 +4,15 @@
       <span class="ql-pick__lock">Locked<%= " · #{prediction_label(pick.prediction, match)}" if pick %></span>
     </div>
   <% else %>
-    <div class="ql-pick" role="group" aria-label="Your prediction">
+    <div class="ql-pick <%= "ql-pick--binary" if match.knockout? %>" role="group" aria-label="<%= match.knockout? ? "Who goes through" : "Your prediction" %>">
       <%= button_to match.home_team, picks_path, method: :post,
             params: { match_id: match.id, prediction: "home" },
             class: "ql-pick__btn #{'is-on' if pick&.home?}" %>
-      <%= button_to "Draw", picks_path, method: :post,
-            params: { match_id: match.id, prediction: "draw" },
-            class: "ql-pick__btn ql-pick__btn--draw #{'is-on' if pick&.draw?}" %>
+      <% unless match.knockout? %>
+        <%= button_to "Draw", picks_path, method: :post,
+              params: { match_id: match.id, prediction: "draw" },
+              class: "ql-pick__btn ql-pick__btn--draw #{'is-on' if pick&.draw?}" %>
+      <% end %>
       <%= button_to match.away_team, picks_path, method: :post,
             params: { match_id: match.id, prediction: "away" },
             class: "ql-pick__btn #{'is-on' if pick&.away?}" %>

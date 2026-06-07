@@ -1,11 +1,11 @@
 require "test_helper"
 
 class FootballData::ResultsImporterTest < ActiveSupport::TestCase
-  def fd(id:, utc:, home:, away:, status: "TIMED", hs: nil, as: nil, stage: "GROUP_STAGE")
+  def fd(id:, utc:, home:, away:, status: "TIMED", hs: nil, as: nil, winner: nil, stage: "GROUP_STAGE")
     {
       "id" => id, "utcDate" => utc.utc.iso8601, "status" => status, "stage" => stage,
       "homeTeam" => { "name" => home }, "awayTeam" => { "name" => away },
-      "score" => { "fullTime" => { "home" => hs, "away" => as } }
+      "score" => { "winner" => winner, "fullTime" => { "home" => hs, "away" => as } }
     }
   end
 
@@ -14,14 +14,31 @@ class FootballData::ResultsImporterTest < ActiveSupport::TestCase
     match = Match.create!(number: 901, home_team: "Mexico", away_team: "South Africa", kickoff_at: kickoff)
 
     summary = FootballData::ResultsImporter.new.import(
-      [ fd(id: 537327, utc: kickoff, home: "Mexico", away: "South Africa", status: "FINISHED", hs: 2, as: 1) ]
+      [ fd(id: 537327, utc: kickoff, home: "Mexico", away: "South Africa", status: "FINISHED", hs: 2, as: 1, winner: "HOME_TEAM") ]
     )
 
     match.reload
     assert match.finished?
     assert_equal [ 2, 1 ], [ match.home_score, match.away_score ]
+    assert_equal "home", match.outcome
+    assert_equal :home, match.result
     assert_equal 537327, match.external_id
     assert_equal 1, summary.scored
+  end
+
+  test "a knockout decided on penalties records the winner, not a draw" do
+    kickoff = Time.utc(2030, 7, 5, 19)
+    knockout = Match.create!(number: 990, home_team: "Spain", away_team: "France", kickoff_at: kickoff)
+
+    FootballData::ResultsImporter.new.import(
+      [ fd(id: 4040, utc: kickoff, home: "Spain", away: "France", status: "FINISHED",
+           hs: 1, as: 1, winner: "AWAY_TEAM", stage: "QUARTER_FINALS") ]
+    )
+
+    knockout.reload
+    assert_equal "away", knockout.outcome
+    assert_equal :away, knockout.result # France went through despite 1-1
+    assert knockout.decided_on_penalties?
   end
 
   test "disambiguates a simultaneous group-stage slot by normalized team name" do

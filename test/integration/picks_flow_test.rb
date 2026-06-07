@@ -44,6 +44,15 @@ class PicksFlowTest < ActionDispatch::IntegrationTest
     end
   end
 
+  test "knockout matches offer a two-way pick with no draw" do
+    join "Nadia"
+    get picks_path
+    frame = "##{ActionView::RecordIdentifier.dom_id(matches(:knockout), :pick)}"
+    assert_select "#{frame} .ql-pick--binary"
+    assert_select "#{frame} .ql-pick__btn", count: 2
+    assert_select "#{frame} .ql-pick__btn--draw", count: 0
+  end
+
   test "settled section shows points earned and a why breakdown" do
     join "Cara" # fixture: called the away upset on the finished match
     get picks_path

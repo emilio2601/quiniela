@@ -32,4 +32,14 @@ class PickTest < ActiveSupport::TestCase
     pick = Pick.new(user: users(:ana), match: matches(:upcoming), prediction: :home)
     assert_not pick.correct?
   end
+
+  test "draw is not allowed on a knockout match" do
+    pick = Pick.new(user: users(:ana), match: matches(:knockout), prediction: :draw)
+    assert_not pick.valid?
+    assert pick.errors[:prediction].any?
+  end
+
+  test "a team pick is allowed on a knockout match" do
+    assert Pick.new(user: users(:ana), match: matches(:knockout), prediction: :home).valid?
+  end
 end

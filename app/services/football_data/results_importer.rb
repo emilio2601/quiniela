@@ -15,6 +15,14 @@ module FootballData
       "United States" => "USA"
     }.freeze
 
+    # football-data's score.winner -> our outcome. This is authoritative: a
+    # knockout decided on penalties reports the winner even with a level score.
+    WINNER_OUTCOME = {
+      "HOME_TEAM" => "home",
+      "AWAY_TEAM" => "away",
+      "DRAW" => "draw"
+    }.freeze
+
     Summary = Struct.new(:scored, :resolved, :unmatched, keyword_init: true) do
       def to_s = "scored=#{scored} resolved=#{resolved} unmatched=#{unmatched}"
     end
@@ -71,6 +79,7 @@ module FootballData
         full_time = fd.dig("score", "fullTime") || {}
         match.home_score = full_time["home"]
         match.away_score = full_time["away"]
+        match.outcome = WINNER_OUTCOME[fd.dig("score", "winner")]
         match.status = "finished"
       end
 
