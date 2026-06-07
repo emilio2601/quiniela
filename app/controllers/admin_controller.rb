@@ -28,5 +28,12 @@ class AdminController < ApplicationController
     # Integrity flags — should be empty in a healthy state.
     @awaiting_result = Match.locked.where(status: "scheduled").with_known_teams.order(:kickoff_at)
     @finished_no_score = Match.finished.where("home_score IS NULL OR away_score IS NULL").order(:kickoff_at)
+
+    # Results poller health: the latest run as a heartbeat, plus the runs that
+    # actually did something (or errored) — the no-ops are noise.
+    @poller_health = PollRun.health
+    @last_poll = PollRun.recent.first
+    @poll_run_count = PollRun.count
+    @notable_runs = PollRun.notable.recent.limit(12)
   end
 end

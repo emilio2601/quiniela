@@ -427,6 +427,16 @@ body { background-color: #ece3cd; }
 .ql-alert { border: 2px solid var(--vermilion); background: rgba(211, 64, 42, 0.08); box-shadow: var(--hard-sm); padding: 15px 18px; margin: 26px 0 4px; }
 .ql-alert__tag { display: block; font-family: var(--display); font-weight: 800; text-transform: uppercase; letter-spacing: 0.04em; color: var(--vermilion-dk); font-size: 1.1rem; margin-bottom: 6px; }
 .ql-alert p { font-family: var(--mono); font-size: 12px; color: var(--ink); margin-top: 5px; }
+.ql-poller__status { margin-left: auto; align-self: center; font-family: var(--mono); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.16em; padding: 4px 11px; border: 1.5px solid var(--ink-faint); color: var(--ink-soft); }
+.ql-poller__status.is-healthy { color: var(--pitch); border-color: var(--pitch); }
+.ql-poller__status.is-failing { color: var(--paper); background: var(--vermilion); border-color: var(--vermilion); }
+.ql-poller__facts { display: flex; flex-wrap: wrap; gap: 14px 40px; margin-bottom: 16px; font-family: var(--mono); }
+.ql-poller__facts > div { display: flex; flex-direction: column; gap: 5px; }
+.ql-poller__k { font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-faint); }
+.ql-poller__v { font-size: 13px; color: var(--ink); }
+.ql-poller__caption { font-family: var(--mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--ink-faint); margin: 0 0 12px; }
+.ql-table .run-ok { color: var(--pitch); }
+.ql-table .run-fail { color: var(--vermilion); }
 
 /* ---------- leaderboard extras ---------- */
 .ql-navlink { font-family: var(--mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.14em; color: var(--ink); border-bottom: 1.5px solid var(--vermilion); padding-bottom: 2px; }

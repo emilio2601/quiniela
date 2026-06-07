@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_06_07_010040) do
+ActiveRecord::Schema[8.1].define(version: 2026_06_07_024135) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -40,6 +40,17 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_07_010040) do
     t.index ["match_id"], name: "index_picks_on_match_id"
     t.index ["user_id", "match_id"], name: "index_picks_on_user_id_and_match_id", unique: true
     t.index ["user_id"], name: "index_picks_on_user_id"
+  end
+
+  create_table "poll_runs", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "error"
+    t.boolean "ok", default: true, null: false
+    t.integer "resolved"
+    t.integer "scored"
+    t.integer "unmatched"
+    t.datetime "updated_at", null: false
+    t.index ["created_at"], name: "index_poll_runs_on_created_at"
   end
 
   create_table "users", force: :cascade do |t|

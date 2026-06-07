@@ -19,4 +19,13 @@ class AdminDashboardTest < ActionDispatch::IntegrationTest
     assert_select ".ql-table--results" # the finished fixture appears here
     assert_select ".ql-table--upcoming"
   end
+
+  test "shows the poller health panel with only notable runs" do
+    PollRun.create!(ok: true, scored: 0, resolved: 0, unmatched: 0) # no-op, hidden
+    PollRun.create!(ok: true, scored: 2, resolved: 0, unmatched: 0) # notable
+
+    get admin_path
+    assert_select ".ql-poller__status.is-healthy"
+    assert_select ".ql-table--runs tbody tr", count: 1 # only the notable run
+  end
 end
