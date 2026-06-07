@@ -1,0 +1,8 @@
+name = "fd-proxy"
+main = "worker.js"
+compatibility_date = "2026-06-01"
+workers_dev = true
+
+# Secrets (set in the dashboard or `wrangler secret put NAME`):
+#   FOOTBALL_DATA_TOKEN  – football-data.org API token
+#   PROXY_KEY            – shared secret matching the app's football_data_proxy_key
