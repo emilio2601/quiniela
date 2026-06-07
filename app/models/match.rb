@@ -48,4 +48,16 @@ class Match < ApplicationRecord
   def locked?
     kickoff_at <= Time.current
   end
+
+  # For a finished match, how the scoring breaks down: how many players picked
+  # it, how many called it right, and the points a correct pick earns (the
+  # number of people beaten). Returns nil until the match is settled.
+  def points_breakdown
+    return nil unless finished? && result
+
+    total = picks.size
+    correct = picks.count { |pick| pick.prediction.to_sym == result }
+    { total: total, correct: correct, beat: total - correct,
+      award: Leaderboard.points_for_correct(total_picks: total, correct_picks: correct) }
+  end
 end

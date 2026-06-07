@@ -1,3 +1,4 @@
+<% breakdown = match.points_breakdown %>
 <article class="ql-match ql-match--settled">
   <div class="ql-match__meta">
     <span class="ql-match__num">Match <%= match.number %></span>
@@ -12,11 +13,26 @@
     <% if pick %>
       <span class="ql-settled__label">Your call</span>
       <span class="ql-settled__value"><%= prediction_label(pick.prediction, match) %></span>
-      <% if match.finished? %>
+      <% if breakdown %>
         <span class="ql-settled__mark <%= pick.correct? ? "is-hit" : "is-miss" %>"><%= pick.correct? ? "✓ hit" : "✗ miss" %></span>
+        <span class="ql-settled__pts <%= "is-zero" unless pick.correct? %>"><%= pick.correct? ? "+#{breakdown[:award]}" : "0" %></span>
       <% end %>
     <% else %>
       <span class="ql-settled__label ql-settled__none">No pick made</span>
     <% end %>
   </div>
+
+  <% if pick && breakdown %>
+    <details class="ql-why">
+      <summary>How this scored</summary>
+      <div class="ql-why__body">
+        <p><b><%= breakdown[:total] %></b> <%= "player".pluralize(breakdown[:total]) %> called this match · <b><%= breakdown[:correct] %></b> got it right.</p>
+        <% if pick.correct? %>
+          <p>You backed <b><%= prediction_label(pick.prediction, match) %></b> and beat the other <b><%= breakdown[:beat] %></b> → <span class="ql-why__pts">+<%= breakdown[:award] %> points</span>.</p>
+        <% else %>
+          <p>You called <%= prediction_label(pick.prediction, match) %>; it finished <b><%= prediction_label(match.result, match) %></b> → <span class="ql-why__pts is-zero">0 points</span>.</p>
+        <% end %>
+      </div>
+    </details>
+  <% end %>
 </article>

@@ -4,7 +4,7 @@ class PicksController < ApplicationController
   # The board: pickable matches to call, plus everything already locked.
   def index
     @open_matches = Match.pickable.order(:kickoff_at)
-    @settled_matches = Match.locked.with_known_teams.order(kickoff_at: :desc)
+    @settled_matches = Match.locked.with_known_teams.includes(:picks).order(kickoff_at: :desc)
     @picks_by_match = current_user.picks.index_by(&:match_id)
   end
 

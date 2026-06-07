@@ -33,4 +33,13 @@ class MatchTest < ActiveSupport::TestCase
     assert_not Match.new(number: 72).knockout?
     assert Match.new(number: 73).knockout?
   end
+
+  test "points_breakdown reports the crowd split and award" do
+    # fixtures: 3 picked the finished match, only Cara (away) called it right
+    assert_equal({ total: 3, correct: 1, beat: 2, award: 2 }, matches(:finished).points_breakdown)
+  end
+
+  test "points_breakdown is nil until the match is settled" do
+    assert_nil matches(:upcoming).points_breakdown
+  end
 end

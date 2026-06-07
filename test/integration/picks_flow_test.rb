@@ -43,4 +43,12 @@ class PicksFlowTest < ActionDispatch::IntegrationTest
       post picks_path, params: { match_id: matches(:finished).id, prediction: "home" }
     end
   end
+
+  test "settled section shows points earned and a why breakdown" do
+    join "Cara" # fixture: called the away upset on the finished match
+    get picks_path
+    assert_select ".ql-settled__pts", text: "+2"
+    assert_select ".ql-why summary"
+    assert_select ".ql-why__pts", /\+2 points/
+  end
 end

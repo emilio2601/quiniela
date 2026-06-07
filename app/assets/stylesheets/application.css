@@ -398,6 +398,22 @@ body { background-color: #ece3cd; }
 .ql-settled__mark.is-hit { color: var(--pitch); }
 .ql-settled__mark.is-miss { color: var(--vermilion); }
 .ql-settled__none { color: var(--ink-faint); }
+.ql-settled__pts { font-family: var(--display); font-weight: 800; font-size: 1.15rem; line-height: 1; color: var(--vermilion-dk); }
+.ql-settled__pts.is-zero { color: var(--ink-faint); }
+
+.ql-why summary {
+  cursor: pointer; list-style: none; display: inline-flex; align-items: center; gap: 7px;
+  font-family: var(--mono); font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.14em; color: var(--ink-faint);
+}
+.ql-why summary::-webkit-details-marker { display: none; }
+.ql-why summary::before { content: "\25B8"; font-size: 9px; transition: transform 0.15s ease; }
+.ql-why[open] summary::before { transform: rotate(90deg); }
+.ql-why summary:hover { color: var(--ink); }
+.ql-why__body { margin-top: 10px; font-family: var(--serif); font-size: 0.95rem; color: var(--ink-soft); }
+.ql-why__body p { margin: 3px 0; }
+.ql-why__body b { color: var(--ink); font-weight: 600; }
+.ql-why__pts { color: var(--vermilion-dk); font-weight: 700; }
+.ql-why__pts.is-zero { color: var(--ink-faint); }
 
 /* ---------- admin dashboard ---------- */
 .ql-admin { padding-top: clamp(30px, 5vw, 56px); padding-bottom: 90px; }
