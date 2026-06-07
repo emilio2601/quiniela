@@ -16,6 +16,12 @@ Rails.application.routes.draw do
   # The picks board: list pickable matches and upsert a prediction per match.
   resources :picks, only: [ :index, :create ]
 
+  # Public standings, scored on read by Leaderboard.
+  get "leaderboard" => "leaderboard#index", as: :leaderboard
+
+  # Internal engagement dashboard — public but intentionally unlinked.
+  get "admin" => "admin#index", as: :admin
+
   # Defines the root path route ("/")
   root "pages#home"
 end

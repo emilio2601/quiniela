@@ -5,6 +5,7 @@
     <div class="ql-wrap ql-top__row">
       <%= link_to root_path, class: "ql-top__mark" do %><span class="ql-top__dot"></span> La Quiniela<% end %>
       <div class="ql-top__meta ql-top__meta--player">
+        <%= link_to "Standings", leaderboard_path, class: "ql-navlink" %>
         <span>Playing as <b><%= current_user.name %></b></span>
         <%= button_to "Leave", leave_path, method: :delete, class: "ql-top__leave" %>
       </div>

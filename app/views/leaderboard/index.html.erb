@@ -1,0 +1,39 @@
+<% content_for :title, "Standings — La Quiniela" %>
+
+<div class="ql ql-page">
+  <header class="ql-top">
+    <div class="ql-wrap ql-top__row">
+      <%= link_to root_path, class: "ql-top__mark" do %><span class="ql-top__dot"></span> La Quiniela<% end %>
+      <div class="ql-top__meta ql-top__meta--player">
+        <% if signed_in? %>
+          <%= link_to "Your picks", picks_path, class: "ql-navlink" %>
+          <span>Playing as <b><%= current_user.name %></b></span>
+        <% else %>
+          <%= link_to "Join the pool", root_path, class: "ql-navlink" %>
+        <% end %>
+      </div>
+    </div>
+  </header>
+
+  <main class="ql-wrap ql-picks">
+    <header class="ql-picks__head">
+      <span class="ql-kicker">FIFA World Cup 2026 · The Standings</span>
+      <h1 class="ql-picks__title">The <span class="em">field</span>.</h1>
+      <p class="ql-picks__lede">Points are the players you beat on each correct call — so the upsets nobody else saw are worth the most. <% if @finished_count.positive? %>After <%= @finished_count %> finished <%= "match".pluralize(@finished_count) %>.<% else %>No matches settled yet.<% end %></p>
+    </header>
+
+    <% leader_points = @standings.first&.dig(:points).to_i %>
+    <div class="ql-board ql-board--full">
+      <% @standings.each_with_index do |row, i| %>
+        <div class="ql-board__row <%= "lead" if i.zero? && leader_points.positive? %>">
+          <span class="ql-board__rk"><%= format("%02d", i + 1) %></span>
+          <span class="ql-board__who">
+            <span class="ql-board__name"><%= row[:user].name %></span>
+            <span class="ql-board__rec"><%= row[:correct] %>/<%= row[:played] %> correct</span>
+          </span>
+          <span class="ql-board__pts"><%= row[:points] %><small>pts</small></span>
+        </div>
+      <% end %>
+    </div>
+  </main>
+</div>

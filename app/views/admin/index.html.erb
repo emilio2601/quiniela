@@ -1,0 +1,130 @@
+<% content_for :title, "Dashboard — La Quiniela" %>
+
+<div class="ql ql-page">
+  <header class="ql-top">
+    <div class="ql-wrap ql-top__row">
+      <%= link_to root_path, class: "ql-top__mark" do %><span class="ql-top__dot"></span> La Quiniela<% end %>
+      <div class="ql-top__meta"><span>Internal · Operations</span></div>
+    </div>
+  </header>
+
+  <main class="ql-wrap ql-admin">
+    <header class="ql-picks__head">
+      <span class="ql-kicker">The Pool · Behind the Curtain</span>
+      <h1 class="ql-picks__title">Mission <span class="em">control</span>.</h1>
+    </header>
+
+    <div class="ql-stats">
+      <div class="ql-stat"><span class="ql-stat__n"><%= @players_count %></span><span class="ql-stat__l">Players</span></div>
+      <div class="ql-stat"><span class="ql-stat__n"><%= @total_picks %></span><span class="ql-stat__l">Picks made</span></div>
+      <div class="ql-stat"><span class="ql-stat__n"><%= @open_count %></span><span class="ql-stat__l">Open now</span></div>
+      <div class="ql-stat"><span class="ql-stat__n"><%= @finished_count %></span><span class="ql-stat__l">Finished</span></div>
+    </div>
+    <p class="ql-admin__updated">Last match row updated:
+      <% if @last_match_update %><time class="ql-localtime" datetime="<%= @last_match_update.utc.iso8601 %>"><%= @last_match_update.utc.strftime("%-d %b, %H:%M UTC") %></time><% else %>never<% end %>
+    </p>
+
+    <% if @awaiting_result.any? || @finished_no_score.any? %>
+      <div class="ql-alert">
+        <span class="ql-alert__tag">Needs attention</span>
+        <% if @awaiting_result.any? %>
+          <p><b><%= @awaiting_result.size %></b> match<%= "es" if @awaiting_result.size != 1 %> past kickoff still awaiting a result (poller backlog): <%= @awaiting_result.map { |m| "##{m.number} #{team_code(m.home_team)}–#{team_code(m.away_team)}" }.join(", ") %>.</p>
+        <% end %>
+        <% if @finished_no_score.any? %>
+          <p><b><%= @finished_no_score.size %></b> finished with no score recorded: <%= @finished_no_score.map { |m| "##{m.number}" }.join(", ") %>.</p>
+        <% end %>
+      </div>
+    <% end %>
+
+    <%# ---- players ---- %>
+    <div class="ql-sec__head ql-admin__sec"><span class="ql-sec__no">Players</span><h2 class="ql-sec__title">Engagement</h2></div>
+    <div class="ql-tablewrap">
+      <table class="ql-table ql-table--players">
+        <thead><tr><th>Player</th><th class="num">Picks</th><th>Open coverage</th><th class="num">Points</th><th>Joined</th><th>Last pick</th></tr></thead>
+        <tbody>
+          <% @rows.each do |row| %>
+            <tr>
+              <td class="player"><%= row[:user].name %></td>
+              <td class="num"><%= row[:picks] %></td>
+              <td class="cover">
+                <span class="ql-bar"><span class="ql-bar__fill" style="width: <%= @open_count.zero? ? 0 : (row[:open_picks] * 100.0 / @open_count).round %>%"></span></span>
+                <span class="ql-bar__txt"><%= row[:open_picks] %> / <%= @open_count %></span>
+              </td>
+              <td class="num pts"><%= row[:points] %></td>
+              <td><time class="ql-localtime" datetime="<%= row[:user].created_at.utc.iso8601 %>"><%= row[:user].created_at.utc.strftime("%-d %b") %></time></td>
+              <td><% if row[:last_pick_at] %><time class="ql-localtime" datetime="<%= row[:last_pick_at].utc.iso8601 %>"><%= row[:last_pick_at].utc.strftime("%-d %b, %H:%M") %></time><% else %><span class="ql-none">never</span><% end %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+
+    <%# ---- recent results (poller audit) ---- %>
+    <div class="ql-sec__head ql-admin__sec"><span class="ql-sec__no">Results</span><h2 class="ql-sec__title">Latest scores</h2></div>
+    <% if @recent_results.any? %>
+      <div class="ql-tablewrap">
+        <table class="ql-table ql-table--results">
+          <thead><tr><th class="num">#</th><th>Fixture</th><th>Score</th><th>Result</th><th class="num">Picks</th><th>H·D·A</th><th class="num">Correct</th><th>Updated</th></tr></thead>
+          <tbody>
+            <% @recent_results.each do |m| %>
+              <% split = pick_split(m) %>
+              <tr>
+                <td class="num"><%= m.number %></td>
+                <td class="fixture"><%= team_code(m.home_team) %> v <%= team_code(m.away_team) %></td>
+                <td><%= m.home_score %>–<%= m.away_score %></td>
+                <td><%= prediction_label(m.result, m) %></td>
+                <td class="num"><%= m.picks.size %></td>
+                <td class="split"><%= split.join(" · ") %></td>
+                <td class="num"><%= m.picks.count { |p| p.prediction.to_sym == m.result } %></td>
+                <td><time class="ql-localtime" datetime="<%= m.updated_at.utc.iso8601 %>"><%= m.updated_at.utc.strftime("%-d %b, %H:%M") %></time></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% else %>
+      <p class="ql-empty">No results yet — the poller hasn't settled any matches.</p>
+    <% end %>
+
+    <%# ---- upcoming ---- %>
+    <div class="ql-sec__head ql-admin__sec"><span class="ql-sec__no">Upcoming</span><h2 class="ql-sec__title">Next off</h2></div>
+    <% if @upcoming.any? %>
+      <div class="ql-tablewrap">
+        <table class="ql-table ql-table--upcoming">
+          <thead><tr><th class="num">#</th><th>Fixture</th><th>Kickoff</th><th class="num">Picks</th><th>H·D·A</th></tr></thead>
+          <tbody>
+            <% @upcoming.each do |m| %>
+              <tr>
+                <td class="num"><%= m.number %></td>
+                <td class="fixture"><%= team_code(m.home_team) %> v <%= team_code(m.away_team) %></td>
+                <td><time class="ql-localtime" datetime="<%= m.kickoff_at.utc.iso8601 %>"><%= m.kickoff_at.utc.strftime("%a %-d %b, %H:%M") %></time></td>
+                <td class="num"><%= m.picks.size %></td>
+                <td class="split"><%= pick_split(m).join(" · ") %></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% else %>
+      <p class="ql-empty">No upcoming pickable matches.</p>
+    <% end %>
+  </main>
+</div>
+
+<script>
+  (function () {
+    function localize() {
+      document.querySelectorAll(".ql-localtime").forEach(function (el) {
+        var d = new Date(el.getAttribute("datetime"));
+        if (isNaN(d)) return;
+        var withTime = el.textContent.indexOf(":") > -1;
+        el.textContent = d.toLocaleString([], withTime
+          ? { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" }
+          : { month: "short", day: "numeric" });
+      });
+    }
+    document.addEventListener("DOMContentLoaded", localize);
+    document.addEventListener("turbo:load", localize);
+    if (document.readyState !== "loading") localize();
+  })();
+</script>

@@ -30,4 +30,11 @@ module MatchesHelper
     else "Draw"
     end
   end
+
+  # The crowd's split for a match as [home, draw, away] counts. Expects picks
+  # to be loaded to avoid per-match queries.
+  def pick_split(match)
+    counts = match.picks.group_by(&:prediction).transform_values(&:size)
+    [ counts["home"].to_i, counts["draw"].to_i, counts["away"].to_i ]
+  end
 end

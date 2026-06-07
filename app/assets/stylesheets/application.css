@@ -399,6 +399,43 @@ body { background-color: #ece3cd; }
 .ql-settled__mark.is-miss { color: var(--vermilion); }
 .ql-settled__none { color: var(--ink-faint); }
 
+/* ---------- admin dashboard ---------- */
+.ql-admin { padding-top: clamp(30px, 5vw, 56px); padding-bottom: 90px; }
+.ql-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin: 26px 0 42px; }
+@media (max-width: 620px) { .ql-stats { grid-template-columns: repeat(2, 1fr); } }
+.ql-stat { background: var(--paper-panel); border: 2px solid var(--ink); box-shadow: var(--hard-sm); padding: 18px 18px 15px; }
+.ql-stat__n { display: block; font-family: var(--display); font-weight: 900; font-size: 2.7rem; line-height: 0.9; }
+.ql-stat__l { font-family: var(--mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.18em; color: var(--ink-soft); }
+
+.ql-tablewrap { border: 2px solid var(--ink); box-shadow: var(--hard); background: var(--paper-panel); overflow-x: auto; }
+.ql-table { width: 100%; border-collapse: collapse; font-family: var(--mono); font-size: 13px; }
+.ql-table th { text-align: left; font-size: 9.5px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-faint); font-weight: 400; padding: 14px 16px; border-bottom: 2px solid var(--ink); white-space: nowrap; }
+.ql-table th.num, .ql-table td.num { text-align: right; }
+.ql-table td { padding: 13px 16px; border-top: 1px solid rgba(28, 24, 20, 0.12); text-transform: uppercase; white-space: nowrap; }
+.ql-table tbody tr:first-child td { border-top: none; }
+.ql-table .player { font-family: var(--display); font-weight: 700; font-size: 1.2rem; }
+.ql-table .fixture { font-family: var(--display); font-weight: 700; font-size: 1.05rem; }
+.ql-table .pts { color: var(--vermilion-dk); font-weight: 700; }
+.ql-table .ql-none { color: var(--ink-faint); text-transform: none; font-style: italic; font-family: var(--serif); }
+.ql-table .cover { min-width: 170px; }
+.ql-bar { display: inline-block; vertical-align: middle; width: 88px; height: 8px; background: var(--paper-deep); border: 1px solid var(--ink); margin-right: 10px; }
+.ql-bar__fill { display: block; height: 100%; background: var(--vermilion); }
+.ql-bar__txt { color: var(--ink-soft); }
+.ql-admin__updated { font-family: var(--mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--ink-faint); margin: -28px 0 6px; }
+.ql-admin__sec { margin-top: 50px; margin-bottom: 18px; }
+.ql-table .split { color: var(--ink-soft); letter-spacing: 0.05em; }
+.ql-alert { border: 2px solid var(--vermilion); background: rgba(211, 64, 42, 0.08); box-shadow: var(--hard-sm); padding: 15px 18px; margin: 26px 0 4px; }
+.ql-alert__tag { display: block; font-family: var(--display); font-weight: 800; text-transform: uppercase; letter-spacing: 0.04em; color: var(--vermilion-dk); font-size: 1.1rem; margin-bottom: 6px; }
+.ql-alert p { font-family: var(--mono); font-size: 12px; color: var(--ink); margin-top: 5px; }
+
+/* ---------- leaderboard extras ---------- */
+.ql-navlink { font-family: var(--mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.14em; color: var(--ink); border-bottom: 1.5px solid var(--vermilion); padding-bottom: 2px; }
+.ql-navlink:hover { color: var(--vermilion-dk); }
+.ql-top__meta--player { gap: 18px; }
+.ql-board__who { display: flex; flex-direction: column; gap: 3px; }
+.ql-board__rec { font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-faint); }
+.ql-board__row.lead .ql-board__rec { color: rgba(236, 227, 205, 0.6); }
+
 @media (prefers-reduced-motion: reduce) {
   .ql * { animation: none !important; transition: none !important; }
   .ql-line > span, .ql-lede, .ql-coupon, .ql-scorelines { opacity: 1 !important; transform: none !important; }
