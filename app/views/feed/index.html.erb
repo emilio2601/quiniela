@@ -1,0 +1,69 @@
+<% content_for :title, "The Feed — La Quiniela" %>
+
+<div class="ql ql-page">
+  <%= render "shared/topbar" %>
+
+  <main class="ql-wrap ql-picks">
+    <header class="ql-picks__head">
+      <span class="ql-kicker">FIFA World Cup 2026 · The Feed</span>
+      <h1 class="ql-picks__title">As it <span class="em">unfolds</span>.</h1>
+      <p class="ql-picks__lede">Every finished match, freshest first — the result and exactly who called it. Picks stay secret until kickoff.</p>
+    </header>
+
+    <% if @matches.any? %>
+      <div class="ql-feed">
+        <% @matches.each do |match| %>
+          <% bd = match.points_breakdown %>
+          <% next unless bd %>
+          <% picks = match.picks.sort_by { |p| [ p.correct? ? 0 : 1, p.user.name ] } %>
+          <% lone = bd[:correct] == 1 %>
+          <article class="ql-feed__item">
+            <div class="ql-feed__meta">
+              <span><%= match.knockout? ? "Knockout" : "Group" %> · Match <%= match.number %></span>
+              <time class="ql-localtime" datetime="<%= match.kickoff_at.utc.iso8601 %>"><%= match.kickoff_at.utc.strftime("%-d %b") %></time>
+            </div>
+            <div class="ql-feed__score">
+              <span class="ql-feed__team <%= "is-win" if match.result == :home %>"><%= match.home_team %></span>
+              <span class="ql-feed__nums"><%= match.home_score %>–<%= match.away_score %><% if match.decided_on_penalties? %> <small class="ql-pens">pens</small><% end %></span>
+              <span class="ql-feed__team ql-feed__team--away <%= "is-win" if match.result == :away %>"><%= match.away_team %></span>
+            </div>
+
+            <% if lone && (hero = picks.find(&:correct?)) %>
+              <p class="ql-feed__lonecall">★ Only <b><%= hero.user.name %></b> called it — <%= prediction_label(match.result, match) %>, <span class="ql-feed__pts">+<%= bd[:award] %></span>.</p>
+            <% end %>
+
+            <div class="ql-feed__calls">
+              <% if picks.any? %>
+                <% picks.each do |pick| %>
+                  <span class="ql-feed__call <%= "is-hit" if pick.correct? %> <%= "is-you" if signed_in? && pick.user_id == current_user.id %>">
+                    <b><%= pick.user.name %></b>
+                    <span class="ql-feed__pick"><%= prediction_label(pick.prediction, match) %></span>
+                    <% if pick.correct? %><span class="ql-feed__pts">+<%= bd[:award] %></span><% end %>
+                  </span>
+                <% end %>
+              <% else %>
+                <span class="ql-feed__none">No one called this one.</span>
+              <% end %>
+            </div>
+          </article>
+        <% end %>
+      </div>
+    <% else %>
+      <p class="ql-empty">No games have finished yet — check back after the first whistle.</p>
+    <% end %>
+  </main>
+
+  <script>
+    (function () {
+      function localize() {
+        document.querySelectorAll(".ql-localtime").forEach(function (el) {
+          var d = new Date(el.getAttribute("datetime"));
+          if (!isNaN(d)) el.textContent = d.toLocaleString([], { month: "short", day: "numeric" });
+        });
+      }
+      document.addEventListener("DOMContentLoaded", localize);
+      document.addEventListener("turbo:load", localize);
+      if (document.readyState !== "loading") localize();
+    })();
+  </script>
+</div>

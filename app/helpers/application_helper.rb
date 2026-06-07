@@ -13,4 +13,12 @@ module ApplicationHelper
   def page_description
     content_for(:description).presence || DEFAULT_DESCRIPTION
   end
+
+  # A top-bar nav link that marks itself active on the current page.
+  def nav_link(label, path)
+    active = current_page?(path)
+    link_to label, path,
+            class: "ql-navlink#{' is-active' if active}",
+            aria: { current: ("page" if active) }
+  end
 end

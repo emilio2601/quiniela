@@ -19,6 +19,9 @@ Rails.application.routes.draw do
   # Public standings, scored on read by Leaderboard.
   get "leaderboard" => "leaderboard#index", as: :leaderboard
 
+  # Public activity feed: finished matches with everyone's picks revealed.
+  get "feed" => "feed#index", as: :feed
+
   # Internal engagement dashboard — public but intentionally unlinked.
   get "admin" => "admin#index", as: :admin
 

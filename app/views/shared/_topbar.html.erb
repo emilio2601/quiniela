@@ -1,0 +1,16 @@
+<header class="ql-top">
+  <div class="ql-wrap ql-top__row">
+    <%= link_to root_path, class: "ql-top__mark" do %><span class="ql-top__dot"></span> La Quiniela<% end %>
+    <nav class="ql-top__nav">
+      <%= nav_link "Feed", feed_path %>
+      <%= nav_link "Standings", leaderboard_path %>
+      <% if signed_in? %>
+        <%= nav_link "Picks", picks_path %>
+        <span class="ql-top__who">Playing as <b><%= current_user.name %></b></span>
+        <%= button_to "Leave", leave_path, method: :delete, class: "ql-top__leave" %>
+      <% else %>
+        <%= nav_link "Join", root_path %>
+      <% end %>
+    </nav>
+  </div>
+</header>

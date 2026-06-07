@@ -9,7 +9,7 @@ class JoinFlowTest < ActionDispatch::IntegrationTest
     assert_equal User.find_by(name: "Nadia").id, session[:user_id]
 
     follow_redirect!
-    assert_select ".ql-top__meta--player", /Nadia/
+    assert_select ".ql-top__who", /Nadia/
   end
 
   test "joining with an existing name (any case) reuses the player" do

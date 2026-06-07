@@ -459,10 +459,40 @@ body { background-color: #ece3cd; }
 /* ---------- leaderboard extras ---------- */
 .ql-navlink { font-family: var(--mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.14em; color: var(--ink); border-bottom: 1.5px solid var(--vermilion); padding-bottom: 2px; }
 .ql-navlink:hover { color: var(--vermilion-dk); }
+
+/* shared top-bar nav: muted links, the current page underlined */
+.ql-top__nav { display: flex; align-items: center; flex-wrap: wrap; gap: 18px; }
+.ql-top__nav form { margin: 0; }
+.ql-top__nav .ql-navlink { border-bottom-color: transparent; color: var(--ink-soft); }
+.ql-top__nav .ql-navlink:hover { color: var(--ink); }
+.ql-top__nav .ql-navlink.is-active { color: var(--ink); border-bottom-color: var(--vermilion); }
+.ql-top__who { font-family: var(--mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.14em; color: var(--ink-soft); }
+.ql-top__who b { color: var(--vermilion-dk); }
 .ql-top__meta--player { gap: 18px; }
 .ql-board__who { display: flex; flex-direction: column; gap: 3px; }
 .ql-board__rec { font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-faint); }
 .ql-board__row.lead .ql-board__rec { color: rgba(236, 227, 205, 0.6); }
+
+/* ---------- the feed ---------- */
+.ql-feed { display: grid; gap: 14px; }
+.ql-feed__item { background: var(--paper-panel); border: 2px solid var(--ink); box-shadow: var(--hard-sm); padding: 16px 18px 18px; }
+.ql-feed__meta { display: flex; justify-content: space-between; gap: 10px; font-family: var(--mono); font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-faint); }
+.ql-feed__score { display: flex; align-items: baseline; gap: 12px; margin-top: 10px; font-family: var(--display); font-weight: 800; text-transform: uppercase; font-size: clamp(1.2rem, 2.4vw, 1.6rem); line-height: 0.95; }
+.ql-feed__team { flex: 1; color: var(--ink-soft); }
+.ql-feed__team--away { text-align: right; }
+.ql-feed__team.is-win { color: var(--ink); }
+.ql-feed__nums { font-family: var(--mono); font-weight: 700; color: var(--vermilion); }
+.ql-feed__lonecall { margin-top: 12px; padding: 8px 12px; background: rgba(211, 64, 42, 0.08); border-left: 3px solid var(--vermilion); font-family: var(--mono); font-size: 11.5px; letter-spacing: 0.04em; color: var(--ink); }
+.ql-feed__lonecall b { color: var(--vermilion-dk); }
+.ql-feed__calls { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+.ql-feed__call { display: inline-flex; align-items: center; gap: 8px; font-family: var(--mono); font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.04em; border: 1.5px solid var(--ink-faint); padding: 5px 10px; color: var(--ink-faint); }
+.ql-feed__call b { color: var(--ink-soft); }
+.ql-feed__call.is-hit { border-color: var(--pitch); color: var(--ink); }
+.ql-feed__call.is-hit b { color: var(--ink); }
+.ql-feed__call.is-you { border-color: var(--ink); box-shadow: 2px 2px 0 var(--ink); }
+.ql-feed__pick { color: inherit; }
+.ql-feed__pts { color: var(--vermilion-dk); font-weight: 700; }
+.ql-feed__none { font-family: var(--serif); font-style: italic; color: var(--ink-faint); }
 
 @media (prefers-reduced-motion: reduce) {
   .ql * { animation: none !important; transition: none !important; }

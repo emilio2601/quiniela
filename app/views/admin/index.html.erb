@@ -2,12 +2,7 @@
 <% content_for :robots, "noindex, nofollow" %>
 
 <div class="ql ql-page">
-  <header class="ql-top">
-    <div class="ql-wrap ql-top__row">
-      <%= link_to root_path, class: "ql-top__mark" do %><span class="ql-top__dot"></span> La Quiniela<% end %>
-      <div class="ql-top__meta"><span>Internal · Operations</span></div>
-    </div>
-  </header>
+  <%= render "shared/topbar" %>
 
   <main class="ql-wrap ql-admin">
     <header class="ql-picks__head">
