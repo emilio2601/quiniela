@@ -6,6 +6,7 @@ class Match < ApplicationRecord
 
   validates :home_team, :away_team, :kickoff_at, presence: true
   validates :number, presence: true, uniqueness: true
+  validates :external_id, uniqueness: true, allow_nil: true
 
   # Matches 1..72 are the group stage; 73..104 are the knockout bracket, whose
   # teams stay as openfootball placeholders (W97, 3CDFG, …) until the results
