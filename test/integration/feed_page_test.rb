@@ -20,4 +20,12 @@ class FeedPageTest < ActionDispatch::IntegrationTest
     # only the single finished fixture appears
     assert_select ".ql-feed__item", count: 1
   end
+
+  test "shows an empty state when nothing has finished" do
+    matches(:finished).update_columns(status: "scheduled", home_score: nil, away_score: nil)
+    get feed_path
+    assert_response :success
+    assert_select ".ql-blank"
+    assert_select ".ql-feed__item", count: 0
+  end
 end

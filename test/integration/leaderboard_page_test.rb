@@ -12,4 +12,13 @@ class LeaderboardPageTest < ActionDispatch::IntegrationTest
     get leaderboard_path
     assert_select ".ql-board__row.lead .ql-board__name", text: "Cara"
   end
+
+  test "shows an empty state when no one has joined" do
+    Pick.delete_all
+    User.delete_all
+    get leaderboard_path
+    assert_response :success
+    assert_select ".ql-blank"
+    assert_select ".ql-board", count: 0
+  end
 end

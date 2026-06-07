@@ -10,18 +10,26 @@
       <p class="ql-picks__lede">Points are the players you beat on each correct call — so the upsets nobody else saw are worth the most. <% if @finished_count.positive? %>After <%= @finished_count %> finished <%= "match".pluralize(@finished_count) %>.<% else %>No matches settled yet.<% end %></p>
     </header>
 
-    <% leader_points = @standings.first&.dig(:points).to_i %>
-    <div class="ql-board ql-board--full">
-      <% @standings.each_with_index do |row, i| %>
-        <div class="ql-board__row <%= "lead" if i.zero? && leader_points.positive? %>">
-          <span class="ql-board__rk"><%= format("%02d", i + 1) %></span>
-          <span class="ql-board__who">
-            <span class="ql-board__name"><%= row[:user].name %></span>
-            <span class="ql-board__rec"><%= row[:correct] %>/<%= row[:played] %> correct</span>
-          </span>
-          <span class="ql-board__pts"><%= row[:points] %><small>pts</small></span>
-        </div>
-      <% end %>
-    </div>
+    <% if @standings.any? %>
+      <% leader_points = @standings.first[:points].to_i %>
+      <div class="ql-board ql-board--full">
+        <% @standings.each_with_index do |row, i| %>
+          <div class="ql-board__row <%= "lead" if i.zero? && leader_points.positive? %>">
+            <span class="ql-board__rk"><%= format("%02d", i + 1) %></span>
+            <span class="ql-board__who">
+              <span class="ql-board__name"><%= row[:user].name %></span>
+              <span class="ql-board__rec"><%= row[:correct] %>/<%= row[:played] %> correct</span>
+            </span>
+            <span class="ql-board__pts"><%= row[:points] %><small>pts</small></span>
+          </div>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="ql-blank">
+        <p class="ql-blank__msg">No one's in the pool yet</p>
+        <p class="ql-blank__sub">The board fills in as friends join and start calling matches.</p>
+        <%= link_to "Join the pool →", root_path, class: "ql-btn ql-blank__cta" unless signed_in? %>
+      </div>
+    <% end %>
   </main>
 </div>

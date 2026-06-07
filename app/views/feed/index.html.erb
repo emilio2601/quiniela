@@ -49,7 +49,11 @@
         <% end %>
       </div>
     <% else %>
-      <p class="ql-empty">No games have finished yet — check back after the first whistle.</p>
+      <div class="ql-blank">
+        <p class="ql-blank__msg">No games have finished yet</p>
+        <p class="ql-blank__sub">The moment a match ends it lands here, with everyone's calls revealed.</p>
+        <%= link_to (signed_in? ? "Make your picks →" : "Join the pool →"), (signed_in? ? picks_path : root_path), class: "ql-btn ql-blank__cta" %>
+      </div>
     <% end %>
   </main>
 
