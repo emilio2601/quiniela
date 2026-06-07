@@ -16,10 +16,11 @@ class Leaderboard
     total_picks - correct_picks
   end
 
-  # Returns rows of { user:, points: } sorted by points desc, then name.
-  # Every user appears, even with zero points.
+  # Returns rows of { user:, points:, correct:, played: } sorted by points desc,
+  # then name. `played` counts finished matches the user picked; `correct` how
+  # many of those they called right. Every user appears, even with zero points.
   def self.standings
-    points = User.pluck(:id).index_with(0)
+    tally = User.pluck(:id).index_with { { points: 0, correct: 0, played: 0 } }
 
     Match.finished.includes(:picks).find_each do |match|
       result = match.result
@@ -29,12 +30,18 @@ class Leaderboard
       correct = match.picks.select { |pick| pick.prediction.to_sym == result }
       award = points_for_correct(total_picks: total, correct_picks: correct.size)
 
-      correct.each { |pick| points[pick.user_id] += award }
+      match.picks.each { |pick| tally[pick.user_id][:played] += 1 if tally.key?(pick.user_id) }
+      correct.each do |pick|
+        next unless tally.key?(pick.user_id)
+
+        tally[pick.user_id][:points] += award
+        tally[pick.user_id][:correct] += 1
+      end
     end
 
-    users = User.where(id: points.keys).index_by(&:id)
-    points
-      .map { |user_id, total| { user: users[user_id], points: total } }
+    users = User.where(id: tally.keys).index_by(&:id)
+    tally
+      .map { |user_id, stat| { user: users[user_id], **stat } }
       .sort_by { |row| [ -row[:points], row[:user].name ] }
   end
 end
