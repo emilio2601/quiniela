@@ -148,9 +148,9 @@ body { background-color: #ece3cd; }
   line-height: 0.82;
   letter-spacing: -0.012em;
 }
-.ql-title .em { color: var(--vermilion); position: relative; display: inline-block; }
+.ql-title .em { color: var(--vermilion); position: relative; display: inline-block; padding-bottom: 0.22em; }
 .ql-title .em::after {
-  content: ""; position: absolute; left: 0; right: 0; bottom: 0.08em; height: 0.08em;
+  content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 0.07em;
   background: var(--vermilion); transform: scaleX(0); transform-origin: left;
   animation: ql-underline 0.7s cubic-bezier(.2,.7,.2,1) 1.35s forwards;
 }
