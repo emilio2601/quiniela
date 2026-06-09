@@ -479,9 +479,13 @@ body { background-color: #ece3cd; }
 /* shared top-bar nav: muted links, the current page underlined */
 .ql-top__nav { display: flex; align-items: center; flex-wrap: wrap; gap: 18px; }
 .ql-top__nav form { margin: 0; }
-.ql-top__nav .ql-navlink { border-bottom-color: transparent; color: var(--ink-soft); }
+/* drop the link's underline border/padding here so the link text centers on
+   the same line as the plain "Playing as" span and the Leave button; draw the
+   active-page underline as a pseudo-element so it adds no vertical offset */
+.ql-top__nav .ql-navlink { position: relative; border-bottom: none; padding-bottom: 0; color: var(--ink-soft); }
 .ql-top__nav .ql-navlink:hover { color: var(--ink); }
-.ql-top__nav .ql-navlink.is-active { color: var(--ink); border-bottom-color: var(--vermilion); }
+.ql-top__nav .ql-navlink.is-active { color: var(--ink); }
+.ql-top__nav .ql-navlink.is-active::after { content: ""; position: absolute; left: 0; right: 0; bottom: -4px; height: 1.5px; background: var(--vermilion); }
 .ql-top__who { font-family: var(--mono); font-size: 12px; text-transform: uppercase; letter-spacing: 0.14em; color: var(--ink-soft); }
 .ql-top__who b { color: var(--vermilion-dk); }
 .ql-top__meta--player { gap: 18px; }
