@@ -108,11 +108,19 @@
               <tr>
                 <td class="num"><%= m.number %></td>
                 <td class="fixture"><%= team_code(m.home_team) %> v <%= team_code(m.away_team) %></td>
-                <td><%= m.home_score %>–<%= m.away_score %></td>
-                <td><%= prediction_label(m.result, m) %></td>
-                <td class="num"><%= m.picks.size %></td>
-                <td class="split"><%= split.join(" · ") %></td>
-                <td class="num"><%= m.picks.count { |p| p.prediction.to_sym == m.result } %></td>
+                <% if m.result %>
+                  <td><%= m.home_score %>–<%= m.away_score %></td>
+                  <td><%= prediction_label(m.result, m) %></td>
+                  <td class="num"><%= m.picks.size %></td>
+                  <td class="split"><%= split.join(" · ") %></td>
+                  <td class="num"><%= m.picks.count { |p| p.prediction.to_sym == m.result } %></td>
+                <% else %>
+                  <td class="ql-none">—</td>
+                  <td class="ql-none">awaiting score</td>
+                  <td class="num"><%= m.picks.size %></td>
+                  <td class="split"><%= split.join(" · ") %></td>
+                  <td class="num ql-none">—</td>
+                <% end %>
                 <td><time class="ql-localtime" datetime="<%= m.updated_at.utc.iso8601 %>"><%= m.updated_at.utc.strftime("%-d %b, %H:%M") %></time></td>
               </tr>
             <% end %>

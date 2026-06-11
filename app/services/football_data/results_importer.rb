@@ -74,9 +74,13 @@ module FootballData
         resolved = true
       end
 
-      if fd["status"] == "FINISHED"
+      # football-data often flips a match to FINISHED before its backend posts
+      # the score (nulls right after the final whistle). Only settle the match
+      # once we actually have a score, so "finished" always means "we have a
+      # result" — no scoreless finished rows, no premature feed/standings entry.
+      full_time = fd.dig("score", "fullTime") || {}
+      if fd["status"] == "FINISHED" && !full_time["home"].nil? && !full_time["away"].nil?
         scored = !match.finished?
-        full_time = fd.dig("score", "fullTime") || {}
         match.home_score = full_time["home"]
         match.away_score = full_time["away"]
         match.outcome = WINNER_OUTCOME[fd.dig("score", "winner")]

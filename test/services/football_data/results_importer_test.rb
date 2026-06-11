@@ -93,6 +93,31 @@ class FootballData::ResultsImporterTest < ActiveSupport::TestCase
     assert_equal 0, importer.import(payload).scored
   end
 
+  test "a FINISHED match with no score yet is left unsettled, then heals" do
+    kickoff = Time.utc(2030, 6, 11, 19)
+    match = Match.create!(number: 906, home_team: "Mexico", away_team: "South Africa", kickoff_at: kickoff)
+    importer = FootballData::ResultsImporter.new
+
+    # football-data flipped to FINISHED but hasn't posted the score (nulls).
+    summary = importer.import(
+      [ fd(id: 6006, utc: kickoff, home: "Mexico", away: "South Africa", status: "FINISHED") ]
+    )
+    match.reload
+    assert_not match.finished?, "should not settle without a score"
+    assert_nil match.home_score
+    assert_equal 0, summary.scored
+    assert_equal 6006, match.external_id, "still records the external_id for later matching"
+
+    # next poll, football-data has filled the score in -> now it settles.
+    summary = importer.import(
+      [ fd(id: 6006, utc: kickoff, home: "Mexico", away: "South Africa", status: "FINISHED", hs: 2, as: 1, winner: "HOME_TEAM") ]
+    )
+    match.reload
+    assert match.finished?
+    assert_equal [ 2, 1 ], [ match.home_score, match.away_score ]
+    assert_equal 1, summary.scored
+  end
+
   test "counts payloads it cannot place" do
     summary = FootballData::ResultsImporter.new.import(
       [ fd(id: 9999, utc: Time.utc(2031, 1, 1, 12), home: "Narnia", away: "Mordor") ]
