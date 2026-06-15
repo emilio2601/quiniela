@@ -502,6 +502,9 @@ body { background-color: #ece3cd; }
 .ql-feed__team--away { text-align: right; }
 .ql-feed__team.is-win { color: var(--ink); }
 .ql-feed__nums { font-family: var(--mono); font-weight: 700; color: var(--vermilion); }
+.ql-feed__vs { font-family: var(--mono); font-weight: 400; font-size: 0.7em; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-faint); }
+/* in-progress tag in the feed meta row (inherits the row's mono/uppercase) */
+.ql-feed__live { display: inline-flex; align-items: center; gap: 7px; color: var(--vermilion-dk); font-weight: 700; }
 .ql-feed__lonecall { margin-top: 12px; padding: 8px 12px; background: rgba(211, 64, 42, 0.08); border-left: 3px solid var(--vermilion); font-family: var(--mono); font-size: 11.5px; letter-spacing: 0.04em; color: var(--ink); }
 .ql-feed__lonecall b { color: var(--vermilion-dk); }
 .ql-feed__calls { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
