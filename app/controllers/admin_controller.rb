@@ -17,7 +17,9 @@ class AdminController < ApplicationController
         picks: picks.size,
         open_picks: picks.count { |pick| open_match_ids.include?(pick.match_id) },
         points: points.dig(user.id, :points) || 0,
-        last_pick_at: picks.map(&:created_at).max
+        # updated_at, not created_at — a pick is upserted, so changing your call
+        # bumps updated_at; created_at would only show the first pick ever made.
+        last_pick_at: picks.map(&:updated_at).max
       }
     end.sort_by { |row| [ -row[:picks], row[:user].name ] }
 
