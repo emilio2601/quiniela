@@ -31,24 +31,58 @@ class FootballData::ResultsImporterTest < ActiveSupport::TestCase
     assert_equal 1, summary.scored
   end
 
-  test "a knockout decided on penalties records the level score and the shootout" do
+  test "a knockout decided on penalties records the level score and derives the shootout" do
     kickoff = Time.utc(2030, 7, 5, 19)
     knockout = Match.create!(number: 990, home_team: "Spain", away_team: "France", kickoff_at: kickoff)
 
-    # football-data's fullTime is cumulative (regulation + extra time + pens);
-    # the match stood 1-1 and France won the shootout 4-5.
+    # football-data's fullTime is cumulative (regulation + extra time + pens) and
+    # is the reliable signal here: winner lags as null and the score/penalties
+    # node sits a stale, level 4-4. The match stood 1-1; France won the pens 4-5.
     FootballData::ResultsImporter.new.import(
       [ fd(id: 4040, utc: kickoff, home: "Spain", away: "France", status: "FINISHED",
-           hs: 5, as: 6, winner: "AWAY_TEAM", stage: "QUARTER_FINALS",
-           duration: "PENALTY_SHOOTOUT", regular: [ 1, 1 ], extra: [ 0, 0 ], pens: [ 4, 5 ]) ]
+           hs: 5, as: 6, winner: nil, stage: "QUARTER_FINALS",
+           duration: "PENALTY_SHOOTOUT", regular: [ 1, 1 ], extra: [ 0, 0 ], pens: [ 4, 4 ]) ]
     )
 
     knockout.reload
     assert_equal [ 1, 1 ], [ knockout.home_score, knockout.away_score ] # the level score, not 5-6
-    assert_equal [ 4, 5 ], [ knockout.home_penalties, knockout.away_penalties ]
-    assert_equal "away", knockout.outcome
+    assert_equal [ 4, 5 ], [ knockout.home_penalties, knockout.away_penalties ] # derived from fullTime
+    assert_equal "away", knockout.outcome # derived: France scored more
     assert_equal :away, knockout.result # France went through despite 1-1
     assert knockout.decided_on_penalties?
+  end
+
+  test "a shootout prefers score.winner when football-data has filled it in" do
+    kickoff = Time.utc(2030, 7, 5, 22)
+    knockout = Match.create!(number: 992, home_team: "Spain", away_team: "Italy", kickoff_at: kickoff)
+
+    FootballData::ResultsImporter.new.import(
+      [ fd(id: 4042, utc: kickoff, home: "Spain", away: "Italy", status: "FINISHED",
+           hs: 4, as: 3, winner: "HOME_TEAM", stage: "QUARTER_FINALS",
+           duration: "PENALTY_SHOOTOUT", regular: [ 1, 1 ], extra: [ 0, 0 ]) ]
+    )
+
+    knockout.reload
+    assert_equal [ 1, 1 ], [ knockout.home_score, knockout.away_score ]
+    assert_equal [ 3, 2 ], [ knockout.home_penalties, knockout.away_penalties ]
+    assert_equal "home", knockout.outcome
+  end
+
+  test "a shootout is left unsettled while fullTime is still level" do
+    kickoff = Time.utc(2030, 7, 5, 19)
+    knockout = Match.create!(number: 993, home_team: "Spain", away_team: "France", kickoff_at: kickoff)
+
+    # Just after the whistle football-data posts a level fullTime — undecided.
+    FootballData::ResultsImporter.new.import(
+      [ fd(id: 4043, utc: kickoff, home: "Spain", away: "France", status: "FINISHED",
+           hs: 4, as: 4, winner: nil, stage: "QUARTER_FINALS",
+           duration: "PENALTY_SHOOTOUT", regular: [ 1, 1 ], extra: [ 0, 0 ]) ]
+    )
+
+    knockout.reload
+    assert_not knockout.finished?, "a level fullTime means the shootout has not resolved yet"
+    assert_nil knockout.outcome
+    assert_equal 4043, knockout.external_id, "still records the external_id for later matching"
   end
 
   test "an extra-time winner keeps its full-time score and no penalties" do

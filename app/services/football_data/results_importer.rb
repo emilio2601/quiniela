@@ -75,14 +75,14 @@ module FootballData
       end
 
       # football-data often flips a match to FINISHED before its backend posts
-      # the score (nulls right after the final whistle). Only settle the match
-      # once we actually have a score, so "finished" always means "we have a
-      # result" — no scoreless finished rows, no premature feed/standings entry.
-      full_time = fd.dig("score", "fullTime") || {}
-      if fd["status"] == "FINISHED" && !full_time["home"].nil? && !full_time["away"].nil?
+      # the score (nulls right after the final whistle), and for a shootout it
+      # posts a level fullTime before the penalties land. Only settle once we
+      # have a usable result, so "finished" always means "we have a result" —
+      # no scoreless finished rows, no premature feed/standings entry, and no
+      # knockout sitting as a draw while we wait for the shootout to resolve.
+      if fd["status"] == "FINISHED" && settleable?(fd)
         scored = !match.finished?
-        apply_score(match, fd, full_time)
-        match.outcome = WINNER_OUTCOME[fd.dig("score", "winner")]
+        apply_score(match, fd)
         match.status = "finished"
       end
 
@@ -90,26 +90,49 @@ module FootballData
       [ scored, resolved ]
     end
 
+    def settleable?(fd)
+      full_time = fd.dig("score", "fullTime") || {}
+      return false if full_time["home"].nil? || full_time["away"].nil?
+
+      # A shootout is undecided until fullTime is no longer level — the side with
+      # more goals won the penalties (both were level after extra time).
+      return full_time["home"] != full_time["away"] if shootout?(fd)
+
+      true
+    end
+
     # For a shootout, football-data's fullTime is the cumulative tally
     # (regulation + extra time + penalties), so home_score/away_score take the
-    # level pre-shootout score (regularTime + extraTime) and the penalties land
-    # in their own columns. Every other result uses fullTime as-is — it already
-    # reflects an extra-time winner (e.g. 2-1 AET).
-    def apply_score(match, fd, full_time)
-      if fd.dig("score", "duration") == "PENALTY_SHOOTOUT"
+    # level pre-shootout score (regularTime + extraTime) and the penalties are
+    # the remainder — derived from fullTime, because the score/penalties node
+    # itself lags (it can sit level for a while after fullTime has resolved).
+    # The winner is whoever scored more, since they were level before penalties;
+    # we still prefer score/winner when football-data has filled it in. Every
+    # other result uses fullTime as-is — it already reflects an extra-time
+    # winner (e.g. 2-1 AET).
+    def apply_score(match, fd)
+      full_time = fd.dig("score", "fullTime") || {}
+
+      if shootout?(fd)
         regular = fd.dig("score", "regularTime") || {}
         extra = fd.dig("score", "extraTime") || {}
-        pens = fd.dig("score", "penalties") || {}
         match.home_score = regular["home"].to_i + extra["home"].to_i
         match.away_score = regular["away"].to_i + extra["away"].to_i
-        match.home_penalties = pens["home"]
-        match.away_penalties = pens["away"]
+        match.home_penalties = full_time["home"] - match.home_score
+        match.away_penalties = full_time["away"] - match.away_score
+        match.outcome = WINNER_OUTCOME[fd.dig("score", "winner")] ||
+                        (full_time["home"] > full_time["away"] ? "home" : "away")
       else
         match.home_score = full_time["home"]
         match.away_score = full_time["away"]
         match.home_penalties = nil
         match.away_penalties = nil
+        match.outcome = WINNER_OUTCOME[fd.dig("score", "winner")]
       end
+    end
+
+    def shootout?(fd)
+      fd.dig("score", "duration") == "PENALTY_SHOOTOUT"
     end
 
     def canonical(name)
