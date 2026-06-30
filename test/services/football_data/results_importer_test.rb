@@ -131,6 +131,21 @@ class FootballData::ResultsImporterTest < ActiveSupport::TestCase
     assert_equal 1, summary.resolved
   end
 
+  test "leaves a knockout unresolved while only one side is known" do
+    kickoff = Time.utc(2030, 7, 5, 19)
+    knockout = Match.create!(number: 981, home_team: "W97", away_team: "W98", kickoff_at: kickoff)
+
+    # Mid-bracket football-data posts the home side before the away side.
+    summary = FootballData::ResultsImporter.new.import(
+      [ fd(id: 2003, utc: kickoff, home: "United States", away: nil, stage: "SEMI_FINALS") ]
+    )
+
+    knockout.reload
+    assert_equal [ "W97", "W98" ], [ knockout.home_team, knockout.away_team ] # untouched, no blank
+    assert_equal 2003, knockout.external_id # still recorded for later matching
+    assert_equal 0, summary.resolved
+  end
+
   test "matches by external_id even when the kickoff has shifted" do
     match = Match.create!(number: 904, home_team: "Brazil", away_team: "Morocco",
                           kickoff_at: Time.utc(2030, 6, 13, 22), external_id: 3003)

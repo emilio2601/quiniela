@@ -67,8 +67,12 @@ module FootballData
       resolved = false
       match.external_id ||= fd["id"]
 
-      # Resolve a knockout fixture's teams once football-data knows them.
-      if match.knockout? && !match.teams_known? && fd.dig("homeTeam", "name").present?
+      # Resolve a knockout fixture's teams once football-data knows them. Both
+      # sides must be filled in: mid-bracket it can post one before the other,
+      # and writing a blank team would fail the not-null validation and abort
+      # the whole import.
+      if match.knockout? && !match.teams_known? &&
+         fd.dig("homeTeam", "name").present? && fd.dig("awayTeam", "name").present?
         match.home_team = canonical(fd.dig("homeTeam", "name"))
         match.away_team = canonical(fd.dig("awayTeam", "name"))
         resolved = true
