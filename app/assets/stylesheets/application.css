@@ -385,7 +385,7 @@ body { background-color: #ece3cd; }
 .ql-match__team--away { text-align: right; }
 .ql-match__v { font-family: var(--mono); font-size: 0.65rem; font-weight: 400; color: var(--ink-faint); }
 .ql-match__score { font-family: var(--mono); font-weight: 700; color: var(--vermilion); }
-.ql-pens { font-family: var(--mono); font-size: 9px; font-weight: 400; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-faint); vertical-align: middle; }
+.ql-pens { font-family: var(--mono); font-size: 0.62em; font-weight: 700; color: var(--vermilion); opacity: 0.72; vertical-align: baseline; }
 
 .ql-pick { display: grid; grid-template-columns: 1fr auto 1fr; gap: 8px; }
 .ql-pick--binary { grid-template-columns: 1fr 1fr; }
