@@ -6,7 +6,7 @@
   </div>
   <div class="ql-match__teams">
     <span class="ql-match__team"><%= match.home_team %></span>
-    <span class="ql-match__score"><%= match.finished? ? "#{match.home_score}–#{match.away_score}" : "·" %><% if match.decided_on_penalties? %> <small class="ql-pens">pens</small><% end %></span>
+    <span class="ql-match__score"><%= match.finished? ? "#{match.home_score}–#{match.away_score}" : "·" %><% if match.decided_on_penalties? %> <small class="ql-pens">(<%= match.home_penalties %>–<%= match.away_penalties %>)</small><% end %></span>
     <span class="ql-match__team ql-match__team--away"><%= match.away_team %></span>
   </div>
   <div class="ql-settled">

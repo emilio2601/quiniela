@@ -48,10 +48,11 @@ class Match < ApplicationRecord
     end
   end
 
-  # A knockout that finished level on the pitch but has a decisive result was
-  # settled by a shootout (extra time that stays level then penalties).
+  # True once the results feed has recorded a shootout score. home_score/away_score
+  # then hold the level pre-shootout result; home_penalties/away_penalties the
+  # shootout itself.
   def decided_on_penalties?
-    knockout? && finished? && home_score.present? && home_score == away_score && result && result != :draw
+    home_penalties.present? && away_penalties.present?
   end
 
   # Picks lock at kickoff — see Pick#kickoff_not_passed.

@@ -81,14 +81,35 @@ module FootballData
       full_time = fd.dig("score", "fullTime") || {}
       if fd["status"] == "FINISHED" && !full_time["home"].nil? && !full_time["away"].nil?
         scored = !match.finished?
-        match.home_score = full_time["home"]
-        match.away_score = full_time["away"]
+        apply_score(match, fd, full_time)
         match.outcome = WINNER_OUTCOME[fd.dig("score", "winner")]
         match.status = "finished"
       end
 
       match.save! if match.changed?
       [ scored, resolved ]
+    end
+
+    # For a shootout, football-data's fullTime is the cumulative tally
+    # (regulation + extra time + penalties), so home_score/away_score take the
+    # level pre-shootout score (regularTime + extraTime) and the penalties land
+    # in their own columns. Every other result uses fullTime as-is — it already
+    # reflects an extra-time winner (e.g. 2-1 AET).
+    def apply_score(match, fd, full_time)
+      if fd.dig("score", "duration") == "PENALTY_SHOOTOUT"
+        regular = fd.dig("score", "regularTime") || {}
+        extra = fd.dig("score", "extraTime") || {}
+        pens = fd.dig("score", "penalties") || {}
+        match.home_score = regular["home"].to_i + extra["home"].to_i
+        match.away_score = regular["away"].to_i + extra["away"].to_i
+        match.home_penalties = pens["home"]
+        match.away_penalties = pens["away"]
+      else
+        match.home_score = full_time["home"]
+        match.away_score = full_time["away"]
+        match.home_penalties = nil
+        match.away_penalties = nil
+      end
     end
 
     def canonical(name)

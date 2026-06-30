@@ -47,6 +47,18 @@ class MatchTest < ActiveSupport::TestCase
     match = matches(:knockout)
     match.update!(status: "finished", home_score: 1, away_score: 1, outcome: "home")
     assert_equal :home, match.result # not a draw
+  end
+
+  test "decided_on_penalties? is true once a shootout score is recorded" do
+    match = matches(:knockout)
+    match.update!(status: "finished", home_score: 1, away_score: 1, outcome: "home",
+                  home_penalties: 5, away_penalties: 4)
     assert match.decided_on_penalties?
+  end
+
+  test "decided_on_penalties? is false without a shootout score" do
+    match = matches(:knockout)
+    match.update!(status: "finished", home_score: 2, away_score: 1, outcome: "home")
+    assert_not match.decided_on_penalties?
   end
 end

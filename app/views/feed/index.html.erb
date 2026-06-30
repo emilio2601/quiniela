@@ -29,7 +29,7 @@
             <div class="ql-feed__score">
               <span class="ql-feed__team <%= "is-win" if match.result == :home %>"><%= match.home_team %></span>
               <% if settled %>
-                <span class="ql-feed__nums"><%= match.home_score %>–<%= match.away_score %><% if match.decided_on_penalties? %> <small class="ql-pens">pens</small><% end %></span>
+                <span class="ql-feed__nums"><%= match.home_score %>–<%= match.away_score %><% if match.decided_on_penalties? %> <small class="ql-pens">(<%= match.home_penalties %>–<%= match.away_penalties %>)</small><% end %></span>
               <% else %>
                 <span class="ql-feed__vs">vs</span>
               <% end %>

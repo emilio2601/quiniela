@@ -10,15 +10,17 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_06_07_031711) do
+ActiveRecord::Schema[8.1].define(version: 2026_06_29_210000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
   create_table "matches", force: :cascade do |t|
+    t.integer "away_penalties"
     t.integer "away_score"
     t.string "away_team", null: false
     t.datetime "created_at", null: false
     t.bigint "external_id"
+    t.integer "home_penalties"
     t.integer "home_score"
     t.string "home_team", null: false
     t.datetime "kickoff_at", null: false
