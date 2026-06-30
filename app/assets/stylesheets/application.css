@@ -517,6 +517,12 @@ body { background-color: #ece3cd; }
 .ql-feed__pts { color: var(--vermilion-dk); font-weight: 700; }
 .ql-feed__none { font-family: var(--serif); font-style: italic; color: var(--ink-faint); }
 
+.ql-pager { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-top: 28px; font-family: var(--mono); font-size: 12px; text-transform: uppercase; letter-spacing: 0.12em; }
+.ql-pager__link { color: var(--vermilion-dk); font-weight: 700; text-decoration: none; border-bottom: 2px solid transparent; padding-bottom: 2px; }
+.ql-pager__link:hover { border-bottom-color: var(--vermilion); }
+.ql-pager__link.is-off { color: var(--ink-faint); opacity: 0.4; pointer-events: none; }
+.ql-pager__at { color: var(--ink-faint); letter-spacing: 0.14em; }
+
 @media (prefers-reduced-motion: reduce) {
   .ql * { animation: none !important; transition: none !important; }
   .ql-line > span, .ql-lede, .ql-coupon, .ql-scorelines { opacity: 1 !important; transform: none !important; }

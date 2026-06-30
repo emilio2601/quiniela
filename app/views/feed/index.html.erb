@@ -56,6 +56,22 @@
           </article>
         <% end %>
       </div>
+
+      <% if @total_pages > 1 %>
+        <nav class="ql-pager" aria-label="Feed pages">
+          <% if @page > 1 %>
+            <%= link_to "← Newer", feed_path(page: @page - 1), class: "ql-pager__link" %>
+          <% else %>
+            <span class="ql-pager__link is-off">← Newer</span>
+          <% end %>
+          <span class="ql-pager__at">Page <%= @page %> of <%= @total_pages %></span>
+          <% if @page < @total_pages %>
+            <%= link_to "Older →", feed_path(page: @page + 1), class: "ql-pager__link" %>
+          <% else %>
+            <span class="ql-pager__link is-off">Older →</span>
+          <% end %>
+        </nav>
+      <% end %>
     <% else %>
       <div class="ql-blank">
         <p class="ql-blank__msg">No games have kicked off yet</p>
