@@ -5,16 +5,32 @@
 
   <main class="ql-wrap ql-picks">
     <header class="ql-picks__head">
-      <span class="ql-kicker">FIFA World Cup 2026 · The Standings</span>
-      <h1 class="ql-picks__title">The <span class="em">field</span>.</h1>
-      <p class="ql-picks__lede">Points are the players you beat on each correct call — so the upsets nobody else saw are worth the most. <% if @finished_count.positive? %>After <%= @finished_count %> finished <%= "match".pluralize(@finished_count) %>.<% else %>No matches settled yet.<% end %></p>
+      <span class="ql-kicker">FIFA World Cup 2026 · <%= @complete ? "Final Standings" : "The Standings" %></span>
+      <% if @complete %>
+        <h1 class="ql-picks__title">The <span class="em">final</span> word.</h1>
+        <p class="ql-picks__lede">All <%= @finished_count %> matches played and settled. Points were the players you beat on each correct call — so the upsets nobody else saw paid out biggest.</p>
+      <% else %>
+        <h1 class="ql-picks__title">The <span class="em">field</span>.</h1>
+        <p class="ql-picks__lede">Points are the players you beat on each correct call — so the upsets nobody else saw are worth the most. <% if @finished_count.positive? %>After <%= @finished_count %> finished <%= "match".pluralize(@finished_count) %>.<% else %>No matches settled yet.<% end %></p>
+      <% end %>
     </header>
+
+    <% if @champions.any? %>
+      <div class="ql-champ">
+        <span class="ql-champ__label"><%= @champions.one? ? "Champion" : "Joint champions" %></span>
+        <p class="ql-champ__who"><%= @champions.map { |row| row[:user].name }.to_sentence %></p>
+        <p class="ql-champ__sub">
+          <%= @champions.first[:points] %> points
+          <% if @champions.one? %> · <%= @champions.first[:correct] %> of <%= @champions.first[:played] %> called right<% end %>
+        </p>
+      </div>
+    <% end %>
 
     <% if @standings.any? %>
       <% leader_points = @standings.first[:points].to_i %>
       <div class="ql-board ql-board--full">
         <% @standings.each_with_index do |row, i| %>
-          <div class="ql-board__row <%= "lead" if i.zero? && leader_points.positive? %>">
+          <div class="ql-board__row <%= "lead" if leader_points.positive? && row[:points] == leader_points %>">
             <span class="ql-board__rk"><%= format("%02d", i + 1) %></span>
             <span class="ql-board__who">
               <span class="ql-board__name"><%= row[:user].name %></span>
