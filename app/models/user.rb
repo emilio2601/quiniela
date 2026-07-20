@@ -4,10 +4,10 @@ class User < ApplicationRecord
 
   validates :name, presence: true, uniqueness: { case_sensitive: false }
 
-  # Find an existing player by name (case-insensitively) or create one.
-  # Returns the user, or an unpersisted invalid record if the name is unusable.
+  # Find an existing player by name (case-insensitively), or nil. The pool
+  # closed with the 2026 tournament, so an unrecognised name is no longer
+  # signed up as a new player — sign-in only, for players already on the board.
   def self.identify(name)
-    name = name.to_s.strip
-    where("LOWER(name) = ?", name.downcase).first || create(name: name)
+    where("LOWER(name) = ?", name.to_s.strip.downcase).first
   end
 end

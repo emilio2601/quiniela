@@ -1,13 +1,14 @@
 class SessionsController < ApplicationController
-  # Join the pool by name — no password, honor system.
+  # Sign in by name — no password, honor system. The pool is closed, so this
+  # only recognises players who were in it.
   def create
     user = User.identify(params[:name])
 
     if user&.persisted?
       session[:user_id] = user.id
-      redirect_to picks_path, notice: "You're in, #{user.name}. Coupon claimed.", status: :see_other
+      redirect_to picks_path, notice: "Welcome back, #{user.name}.", status: :see_other
     else
-      redirect_to root_path, alert: "Stake a name to claim your ticket.", status: :see_other
+      redirect_to root_path, alert: "The pool is closed — that name isn't on the sheet.", status: :see_other
     end
   end
 
