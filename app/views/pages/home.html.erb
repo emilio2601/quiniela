@@ -43,7 +43,11 @@
           <% @upcoming_matches.each do |match| %>
             <span class="ql-chip"><b><%= team_code(match.home_team) %></b> v <%= team_code(match.away_team) %></span>
           <% end %>
-          <span class="ql-chip ql-chip--live"><span class="ql-pulse" aria-hidden="true"></span> Upset watch</span>
+          <% if @upcoming_matches.any? %>
+            <span class="ql-chip ql-chip--live"><span class="ql-pulse" aria-hidden="true"></span> Upset watch</span>
+          <% else %>
+            <span class="ql-chip">104 matches played</span>
+          <% end %>
         </div>
       </div>
 
@@ -55,8 +59,8 @@
             <span class="ql-coupon__no">Nº 0006</span>
           </div>
           <p class="ql-claimed__hi">Stamped for <em><%= current_user.name %></em>.</p>
-          <p class="ql-claimed__sub">You're in the pool. Time to call some matches.</p>
-          <%= link_to "Make your picks →", picks_path, class: "ql-btn ql-claimed__cta" %>
+          <p class="ql-claimed__sub">You played the 2026 pool. Every call is sealed and settled.</p>
+          <%= link_to "Revisit your coupon →", picks_path, class: "ql-btn ql-claimed__cta" %>
           <div class="ql-claimed__row">
             <span class="ql-claimed__badge">✓ Claimed</span>
             <%= button_to "Not you?", leave_path, method: :delete, class: "ql-claimed__leave" %>
@@ -68,12 +72,12 @@
             <span>Shared Coupon</span>
             <span class="ql-coupon__no">Nº 0006</span>
           </div>
-          <%= f.label :name, "Stake your name", class: "ql-coupon__label" %>
+          <%= f.label :name, "Already played? Sign in", class: "ql-coupon__label" %>
           <div class="ql-field">
             <%= f.text_field :name, placeholder: "e.g. ANA", autocomplete: "off", autofocus: false, class: "ql-input", aria: { label: "Your name" } %>
-            <%= f.button "Claim ticket", class: "ql-btn" %>
+            <%= f.button "Sign in", class: "ql-btn" %>
           </div>
-          <p class="ql-coupon__fine">No password · No money · Honour system</p>
+          <p class="ql-coupon__fine">The pool is closed · Sign in to revisit your coupon</p>
         <% end %>
       <% end %>
     </div>
